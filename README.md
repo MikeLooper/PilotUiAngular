@@ -124,5 +124,5 @@ Values include:
 
 ## Documentation
 
-- Architecture guide: [docs/APPLICATION_ARCHITECTURE.md](docs/APPLICATION_ARCHITECTURE.md)
-- Implementation report: [docs/SPA_IMPLEMENTATION_REPORT.md](docs/SPA_IMPLEMENTATION_REPORT.md)
+- Architecture guide: [docs/Application Architecture.md](docs/Application Architecture.md)
+- Implementation report: [docs/SPA Implementation Report.md](docs/SPA Implementation Report.md)
