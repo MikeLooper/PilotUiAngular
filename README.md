@@ -121,3 +121,8 @@ Values include:
 - npm run format: format code
 - npm run format:check: verify formatting
 - npm run api:generate: regenerate typed API client
+
+## Documentation
+
+- Architecture guide: [docs/APPLICATION_ARCHITECTURE.md](docs/APPLICATION_ARCHITECTURE.md)
+- Implementation report: [docs/SPA_IMPLEMENTATION_REPORT.md](docs/SPA_IMPLEMENTATION_REPORT.md)

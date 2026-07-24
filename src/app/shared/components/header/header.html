@@ -6,4 +6,12 @@
       <p>Angular SPA with OpenAPI-driven data access</p>
     </div>
   </div>
+
+  <nav class="main-nav" aria-label="Primary">
+    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+      Home
+    </a>
+    <a routerLink="/resources" routerLinkActive="is-active">Resources</a>
+    <a routerLink="/explorer" routerLinkActive="is-active">API Explorer</a>
+  </nav>
 </header>

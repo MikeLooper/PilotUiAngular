@@ -1,0 +1,262 @@
+<section class="resource-page">
+  <header class="resource-page__header">
+    <h2>{{ heading() }}</h2>
+    <p>{{ description() }}</p>
+  </header>
+
+  <nav class="resource-page__nav" aria-label="Resource pages">
+    @for (link of links; track link.path) {
+      <a
+        [routerLink]="link.path"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ link.label }}
+      </a>
+    }
+  </nav>
+
+  @if (activeCrudFacade(); as facade) {
+    @let vm = facade.vm();
+
+    <section class="resource-card">
+      <header class="resource-card__toolbar">
+        <label class="resource-field">
+          <span>Search</span>
+          <input
+            type="search"
+            placeholder="Search records"
+            [ngModel]="vm.searchTerm"
+            (ngModelChange)="onSearchTermChanged($event)"
+          />
+        </label>
+
+        <div class="resource-card__actions">
+          <app-button
+            label="Toggle Sort"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onToggleSortDirection()"
+          ></app-button>
+          <app-button
+            label="Refresh"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onReload()"
+          ></app-button>
+        </div>
+      </header>
+
+      <section class="resource-card__commands">
+        <label class="resource-field">
+          <span>{{ facade.primaryIdLabel }}</span>
+          <input type="text" [ngModel]="primaryIdValue" (ngModelChange)="primaryIdValue = $event" />
+        </label>
+
+        @if (facade.secondaryIdLabel) {
+          <label class="resource-field">
+            <span>{{ facade.secondaryIdLabel }}</span>
+            <input
+              type="text"
+              [ngModel]="secondaryIdValue"
+              (ngModelChange)="secondaryIdValue = $event"
+            />
+          </label>
+        }
+
+        <div class="resource-card__actions resource-card__actions--compact">
+          <app-button
+            label="Get By Id"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onFetchById()"
+          ></app-button>
+          <app-button
+            label="Delete"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onDeleteById()"
+          ></app-button>
+          <app-button
+            label="Create Sample"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onCreateSample()"
+          ></app-button>
+          <app-button
+            label="Update Sample"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onUpdateSample()"
+          ></app-button>
+        </div>
+      </section>
+
+      @if (vm.isLoading) {
+        <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Loading data...</p>
+      }
+
+      @if (vm.errorMessage; as errorMessage) {
+        <div class="error" role="alert">
+          <h3>Request failed</h3>
+          <p>{{ errorMessage }}</p>
+          <app-button label="Try Again" [type]="'button'" (click)="onReload()"></app-button>
+        </div>
+      }
+
+      @if (vm.hasEmptyState) {
+        <p class="status">No records matched your current filters.</p>
+      }
+
+      @if (vm.totalItems > 0) {
+        <ul class="resource-list">
+          @for (item of vm.pagedItems; track item.primaryId + ':' + (item.secondaryId ?? '')) {
+            <li>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.subtitle }}</p>
+              <small>ID: {{ item.primaryId }}@if (item.secondaryId) { / {{ item.secondaryId }} }</small>
+            </li>
+          }
+        </ul>
+
+        <footer class="pagination">
+          <app-button
+            label="Previous"
+            [type]="'button'"
+            [disabled]="vm.page <= 1 || vm.isLoading"
+            (click)="onPageChanged(vm.page - 1)"
+          ></app-button>
+
+          <p>
+            Page {{ vm.page }} of {{ vm.totalPages }} · {{ vm.totalItems }} total records
+          </p>
+
+          <app-button
+            label="Next"
+            [type]="'button'"
+            [disabled]="vm.page >= vm.totalPages || vm.isLoading"
+            (click)="onPageChanged(vm.page + 1)"
+          ></app-button>
+        </footer>
+      }
+
+      @if (selectedSections().length > 0) {
+        <section class="details-panel">
+          <h3>Selected record</h3>
+          @for (section of selectedSections(); track section.title) {
+            <article class="details-panel__section">
+              <h4>{{ section.title }}</h4>
+
+              @if (section.kind === 'fields' && section.fields) {
+                <dl>
+                  @for (field of section.fields; track field.label) {
+                    <dt>{{ field.label }}</dt>
+                    <dd>{{ field.value }}</dd>
+                  }
+                </dl>
+              }
+
+              @if (section.kind === 'table' && section.table) {
+                <div class="details-panel__table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        @for (column of section.table.columns; track column) {
+                          <th scope="col">{{ column }}</th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of section.table.rows; track $index) {
+                        <tr>
+                          @for (cell of row; track $index) {
+                            <td>{{ cell }}</td>
+                          }
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </article>
+          }
+        </section>
+      }
+
+      @if (mutationSections().length > 0) {
+        <section class="details-panel">
+          <h3>Last mutation result</h3>
+          @for (section of mutationSections(); track section.title) {
+            <article class="details-panel__section">
+              <h4>{{ section.title }}</h4>
+
+              @if (section.kind === 'fields' && section.fields) {
+                <dl>
+                  @for (field of section.fields; track field.label) {
+                    <dt>{{ field.label }}</dt>
+                    <dd>{{ field.value }}</dd>
+                  }
+                </dl>
+              }
+
+              @if (section.kind === 'table' && section.table) {
+                <div class="details-panel__table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        @for (column of section.table.columns; track column) {
+                          <th scope="col">{{ column }}</th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of section.table.rows; track $index) {
+                        <tr>
+                          @for (cell of row; track $index) {
+                            <td>{{ cell }}</td>
+                          }
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </article>
+          }
+        </section>
+      }
+    </section>
+  } @else {
+    @let vm = systemFacade.vm();
+
+    <section class="resource-card">
+      <header class="resource-card__toolbar">
+        <p>Run a health check against the backend API.</p>
+        <app-button
+          label="Run Healthcheck"
+          [type]="'button'"
+          [disabled]="vm.isLoading"
+          (click)="onRunHealthcheck()"
+        ></app-button>
+      </header>
+
+      @if (vm.isLoading) {
+        <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Running health check...</p>
+      }
+
+      @if (vm.errorMessage; as errorMessage) {
+        <div class="error" role="alert">
+          <h3>Health check failed</h3>
+          <p>{{ errorMessage }}</p>
+        </div>
+      }
+
+      @if (vm.healthcheckResult; as healthResult) {
+        <section class="details-panel">
+          <h3>Latest result</h3>
+          <p>{{ healthResult }}</p>
+        </section>
+      }
+    </section>
+  }
+</section>

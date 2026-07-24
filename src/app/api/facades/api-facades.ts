@@ -1,0 +1,10 @@
+export { BaseResourceApiFacade } from './base-resource-api.facade';
+export { CategoriesApiFacade } from './categories-api.facade';
+export { CustomersApiFacade } from './customers-api.facade';
+export { EmployeesApiFacade } from './employees-api.facade';
+export { OrderDetailsApiFacade } from './order-details-api.facade';
+export { OrdersApiFacade } from './orders-api.facade';
+export { ProductsApiFacade } from './products-api.facade';
+export { ShippersApiFacade } from './shippers-api.facade';
+export { SuppliersApiFacade } from './suppliers-api.facade';
+export { SystemApiFacade } from './system-api.facade';
