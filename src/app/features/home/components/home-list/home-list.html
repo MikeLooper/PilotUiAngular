@@ -1,0 +1,9 @@
+<ul class="category-list" aria-label="Categories list">
+  @for (item of items(); track item.id) {
+    <li class="category-item">
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description | truncate:140 }}</p>
+      <small>ID: {{ item.id }}</small>
+    </li>
+  }
+</ul>

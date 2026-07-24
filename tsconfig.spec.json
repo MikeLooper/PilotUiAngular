@@ -4,9 +4,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    "rootDir": ".",
     "types": [
       "vitest/globals"
     ]
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
   },
   "include": [
     "src/**/*.d.ts",

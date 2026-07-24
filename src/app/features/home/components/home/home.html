@@ -1,1 +1,73 @@
-<p>home works!</p>
+<section class="home-page">
+  <header class="home-page__header">
+    <div>
+      <h2>Categories</h2>
+      <p>Data is loaded using generated OpenAPI clients and feature-level facades.</p>
+    </div>
+
+    <div class="home-page__actions">
+      <label class="search-label" for="category-search">Search</label>
+      <input
+        id="category-search"
+        class="search-input"
+        type="search"
+        placeholder="Search by name or description"
+        [ngModel]="vm().searchTerm"
+        (ngModelChange)="onSearchTermChanged($event)"
+      />
+
+      <app-button
+        label="Toggle Sort"
+        [type]="'button'"
+        [disabled]="vm().isLoading"
+        (click)="onToggleSortDirection()"
+      ></app-button>
+      <app-button
+        label="Refresh"
+        [type]="'button'"
+        [disabled]="vm().isLoading"
+        (click)="onReload()"
+      ></app-button>
+    </div>
+  </header>
+
+  @if (vm().isLoading) {
+    <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Loading categories...</p>
+  }
+
+  @if (vm().errorMessage; as errorMessage) {
+    <div class="error" role="alert">
+      <h3>Request failed</h3>
+      <p>{{ errorMessage }}</p>
+      <app-button label="Try Again" [type]="'button'" (click)="onReload()"></app-button>
+    </div>
+  }
+
+  @if (vm().hasEmptyState) {
+    <p class="status">No categories matched your search.</p>
+  }
+
+  @if (vm().totalItems > 0) {
+    <app-home-list [items]="vm().pagedItems"></app-home-list>
+
+    <footer class="pagination">
+      <app-button
+        label="Previous"
+        [type]="'button'"
+        [disabled]="vm().page <= 1 || vm().isLoading"
+        (click)="onPageChanged(vm().page - 1)"
+      ></app-button>
+
+      <p>
+        Page {{ vm().page }} of {{ vm().totalPages }} · {{ vm().totalItems }} total categories
+      </p>
+
+      <app-button
+        label="Next"
+        [type]="'button'"
+        [disabled]="vm().page >= vm().totalPages || vm().isLoading"
+        (click)="onPageChanged(vm().page + 1)"
+      ></app-button>
+    </footer>
+  }
+</section>
