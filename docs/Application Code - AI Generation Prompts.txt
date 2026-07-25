@@ -127,4 +127,21 @@ Also add consumption for all endpoints for: Customers, Employees, OrderDetails, 
 14.
 "Add a short pointer section in README.md that links to this new architecture guide and the implementation report."
 
+15.
+"The 'PilotApi_v1.yaml' file has been updated by adding an 'about' endpoint.
+Update the current application to consume the new 'about' endpoint, in a similar manner to how the 'get-all' endpoint of the 'suppliers' is being consumed."
 
+16.
+"Update the 'Home' page by doing the following:
+  - Remove the Categories presentation.
+  - Add, as a page logo, the image that can be found at '.\images\logo.png'.
+  - Add an item that says "Connection to API: xxx", where the xxx is the ouput of a call to the API healthcheck endpoint.
+  - Add an item that says "API Version: xxx", where the xxx is the ouput of a call to the API about endpoint, reading the 'apiVersion' property.
+  - Add an item that says "API Deployed: xxx", where the xxx is the ouput of a call to the API about endpoint, reading the 'deployDate' property."
+17.
+"Remove the following text:
+  - System Status
+  - Live status values from the API healthcheck and about endpoints.
+ Center the image and increase it's size about 3 time bigger.
+ Below the current display section, add the following:
+  - A table of contents tha links to the 'Resources' and 'API Explorer' pages."

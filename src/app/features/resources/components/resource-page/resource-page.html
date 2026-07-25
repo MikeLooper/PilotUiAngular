@@ -232,12 +232,20 @@
     <section class="resource-card">
       <header class="resource-card__toolbar">
         <p>Run a health check against the backend API.</p>
-        <app-button
-          label="Run Healthcheck"
-          [type]="'button'"
-          [disabled]="vm.isLoading"
-          (click)="onRunHealthcheck()"
-        ></app-button>
+        <div class="resource-card__actions">
+          <app-button
+            label="Run Healthcheck"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onRunHealthcheck()"
+          ></app-button>
+          <app-button
+            label="Load About"
+            [type]="'button'"
+            [disabled]="vm.isLoading"
+            (click)="onRunAbout()"
+          ></app-button>
+        </div>
       </header>
 
       @if (vm.isLoading) {
@@ -253,8 +261,15 @@
 
       @if (vm.healthcheckResult; as healthResult) {
         <section class="details-panel">
-          <h3>Latest result</h3>
+          <h3>Latest healthcheck result</h3>
           <p>{{ healthResult }}</p>
+        </section>
+      }
+
+      @if (vm.aboutResult; as aboutResult) {
+        <section class="details-panel">
+          <h3>About response</h3>
+          <pre>{{ aboutResult | json }}</pre>
         </section>
       }
     </section>

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiClient, healthcheckGet } from '../generated';
+import { AboutResponse, ApiClient, aboutGet, healthcheckGet } from '../generated';
 
 @Injectable({ providedIn: 'root' })
 export class SystemApiFacade {
@@ -8,5 +8,9 @@ export class SystemApiFacade {
 
   public getHealthcheck(): Observable<string> {
     return this.apiClient.invoke(healthcheckGet);
+  }
+
+  public getAbout(showDetails = true): Observable<AboutResponse> {
+    return this.apiClient.invoke(aboutGet, { 'show-details': showDetails });
   }
 }

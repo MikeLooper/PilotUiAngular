@@ -6,10 +6,14 @@ export { RequestBuilder } from './request-builder';
 export type { StrictHttpResponse } from './strict-http-response';
 export { ApiClient } from './api-client';
 
+export type { AboutResponse } from './models/about-response';
 export type { AddResponseInt } from './models/add-response-int';
 export type { CategoriesDto } from './models/categories-dto';
 export type { CustomersDto } from './models/customers-dto';
 export type { EmployeesDto } from './models/employees-dto';
+export type { IApplicationConfiguration } from './models/i-application-configuration';
+export type { OpenApiConfiguration } from './models/open-api-configuration';
+export type { OpenApiContactConfiguration } from './models/open-api-contact-configuration';
 export type { OrderDetailsDto } from './models/order-details-dto';
 export type { OrdersDto } from './models/orders-dto';
 export type { ProblemDetails } from './models/problem-details';
@@ -99,3 +103,5 @@ export type { SuppliersDeleteSupplierIdDelete$Params as SuppliersDeleteSupplierI
 export { suppliersDeleteSupplierIdDelete as suppliersDeleteSupplierIdDelete } from './fn/suppliers/suppliers-delete-supplier-id-delete';
 export type { HealthcheckGet$Params as HealthcheckGet$Params } from './fn/system/healthcheck-get';
 export { healthcheckGet as healthcheckGet } from './fn/system/healthcheck-get';
+export type { AboutGet$Params as AboutGet$Params } from './fn/system/about-get';
+export { aboutGet as aboutGet } from './fn/system/about-get';

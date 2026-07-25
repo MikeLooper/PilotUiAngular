@@ -208,6 +208,10 @@ export class ApiExplorerService {
   public runHealthcheck(): void {
     this.systemResource.runHealthcheck();
   }
+
+  public runAbout(): void {
+    this.systemResource.runAbout();
+  }
 }
 
 export type { ResourcePanelState } from '../../resources/services/resources-services';

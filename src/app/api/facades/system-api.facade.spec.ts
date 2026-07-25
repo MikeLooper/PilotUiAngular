@@ -1,4 +1,5 @@
 import { HttpTestingController } from '@angular/common/http/testing';
+import { AboutResponse } from '../generated';
 import { SystemApiFacade } from './system-api.facade';
 import { expectGet, setupFacadeTestbed } from './testing/setup-facade-testbed';
 
@@ -27,5 +28,24 @@ describe('SystemApiFacade', () => {
     request.flush('Healthy');
 
     expect(health).toBe('Healthy');
+  });
+
+  it('runs about endpoint', () => {
+    let about: AboutResponse | null = null;
+
+    facade.getAbout().subscribe((result) => {
+      about = result;
+    });
+
+    const request = expectGet(httpMock, 'http://localhost:53060/about?show-details=true');
+    request.flush({
+      name: 'PilotApiDotNet',
+      apiVersion: '0.1.1',
+    });
+
+    expect(about).toEqual({
+      name: 'PilotApiDotNet',
+      apiVersion: '0.1.1',
+    });
   });
 });

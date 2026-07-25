@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { CategoriesApiFacade } from '../../../../api/facades/categories-api.facade';
+import { SystemApiFacade } from '../../../../api/facades/system-api.facade';
 
 import { HomePageComponent } from './home';
 
@@ -12,10 +13,12 @@ describe('Home', () => {
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
       providers: [
+        provideRouter([]),
         {
-          provide: CategoriesApiFacade,
+          provide: SystemApiFacade,
           useValue: {
-            getAll: () => of([]),
+            getHealthcheck: () => of('Healthy'),
+            getAbout: () => of({ apiVersion: '1.0', deployDate: '2026-07-24' }),
           },
         },
       ],

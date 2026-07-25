@@ -1,4 +1,5 @@
 import { Signal } from '@angular/core';
+import type { AboutResponse } from '../../../../api/generated';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -99,6 +100,7 @@ export interface ResourceCrudVmFacade {
 export interface SystemVmState {
   readonly isLoading: boolean;
   readonly healthcheckResult: string | null;
+  readonly aboutResult: AboutResponse | null;
   readonly errorMessage: string | null;
 }
 
@@ -109,4 +111,5 @@ export interface SystemVmFacade {
   readonly vm: Signal<SystemVmState>;
 
   runHealthcheck(): void;
+  runAbout(): void;
 }

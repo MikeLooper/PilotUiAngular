@@ -1,27 +1,10 @@
 <section class="home-page">
   <header class="home-page__header">
-    <div>
-      <h2>Categories</h2>
-      <p>Data is loaded using generated OpenAPI clients and feature-level facades.</p>
+    <div class="home-page__branding">
+      <img src="/images/logo.png" alt="Pilot API logo" class="home-page__logo" />
     </div>
 
     <div class="home-page__actions">
-      <label class="search-label" for="category-search">Search</label>
-      <input
-        id="category-search"
-        class="search-input"
-        type="search"
-        placeholder="Search by name or description"
-        [ngModel]="vm().searchTerm"
-        (ngModelChange)="onSearchTermChanged($event)"
-      />
-
-      <app-button
-        label="Toggle Sort"
-        [type]="'button'"
-        [disabled]="vm().isLoading"
-        (click)="onToggleSortDirection()"
-      ></app-button>
       <app-button
         label="Refresh"
         [type]="'button'"
@@ -32,7 +15,7 @@
   </header>
 
   @if (vm().isLoading) {
-    <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Loading categories...</p>
+    <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Loading API status...</p>
   }
 
   @if (vm().errorMessage; as errorMessage) {
@@ -43,31 +26,17 @@
     </div>
   }
 
-  @if (vm().hasEmptyState) {
-    <p class="status">No categories matched your search.</p>
-  }
+  <ul class="status-list">
+    <li>Connection to API: {{ vm().connectionToApi }}</li>
+    <li>API Version: {{ vm().apiVersion }}</li>
+    <li>API Deployed: {{ vm().apiDeployed }}</li>
+  </ul>
 
-  @if (vm().totalItems > 0) {
-    <app-home-list [items]="vm().pagedItems"></app-home-list>
-
-    <footer class="pagination">
-      <app-button
-        label="Previous"
-        [type]="'button'"
-        [disabled]="vm().page <= 1 || vm().isLoading"
-        (click)="onPageChanged(vm().page - 1)"
-      ></app-button>
-
-      <p>
-        Page {{ vm().page }} of {{ vm().totalPages }} · {{ vm().totalItems }} total categories
-      </p>
-
-      <app-button
-        label="Next"
-        [type]="'button'"
-        [disabled]="vm().page >= vm().totalPages || vm().isLoading"
-        (click)="onPageChanged(vm().page + 1)"
-      ></app-button>
-    </footer>
-  }
+  <section class="home-page__toc" aria-labelledby="home-toc-title">
+    <h3 id="home-toc-title">Table of Contents</h3>
+    <ul>
+      <li><a routerLink="/resources">Resources</a></li>
+      <li><a routerLink="/explorer">API Explorer</a></li>
+    </ul>
+  </section>
 </section>

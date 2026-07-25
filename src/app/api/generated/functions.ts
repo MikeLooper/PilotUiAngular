@@ -83,3 +83,5 @@ export type { SuppliersDeleteSupplierIdDelete$Params as SuppliersDeleteSupplierI
 export { suppliersDeleteSupplierIdDelete as suppliersDeleteSupplierIdDelete } from './fn/suppliers/suppliers-delete-supplier-id-delete';
 export type { HealthcheckGet$Params as HealthcheckGet$Params } from './fn/system/healthcheck-get';
 export { healthcheckGet as healthcheckGet } from './fn/system/healthcheck-get';
+export type { AboutGet$Params as AboutGet$Params } from './fn/system/about-get';
+export { aboutGet as aboutGet } from './fn/system/about-get';

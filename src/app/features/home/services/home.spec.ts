@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { CategoriesApiFacade } from '../../../api/facades/categories-api.facade';
+import { SystemApiFacade } from '../../../api/facades/system-api.facade';
 
 import { HomeFacade } from './home';
 
@@ -11,9 +11,10 @@ describe('HomeFacade', () => {
     TestBed.configureTestingModule({
       providers: [
         {
-          provide: CategoriesApiFacade,
+          provide: SystemApiFacade,
           useValue: {
-            getAll: () => of([]),
+            getHealthcheck: () => of('Healthy'),
+            getAbout: () => of({ apiVersion: '1.0', deployDate: '2026-07-24' }),
           },
         },
       ],

@@ -1089,8 +1089,53 @@ paths:
             application/json:
               schema:
                 type: string
+  /about:
+    get:
+      tags:
+        - System
+      summary: Returns application metadata and optional configuration details.
+      parameters:
+        - name: show-details
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: ApiVersion
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AboutResponse"
 components:
   schemas:
+    AboutResponse:
+      type: object
+      properties:
+        apiVersion:
+          type:
+            - "null"
+            - string
+        applicationConfiguration:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/IApplicationConfiguration"
+        buildVersion:
+          type:
+            - "null"
+            - string
+        deployDate:
+          type:
+            - "null"
+            - string
+        name:
+          type:
+            - "null"
+            - string
     AddResponseInt:
       type: object
       properties:
@@ -1175,6 +1220,101 @@ components:
           type:
             - "null"
             - string
+    DataConnectionConfiguration:
+      type: object
+      properties:
+        connectTimeout:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          description: Gets or sets the connection timeout in seconds. A value of 0
+            indicates no timeout.
+          format: int32
+        dataSourceName:
+          type:
+            - "null"
+            - string
+          description: "Gets or sets the name of the related data source settings
+            section.\r
+
+            This value will match an Application.DataSources[???].DataSourceName
+            setting."
+        host:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the data source host (e.g., "localhost")
+        password:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the data source user password.
+        port:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          description: Gets or sets the data source port number. A value of null indicates
+            the default port for the specified data source type.
+          format: int32
+        userName:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the data source user name.
+        active:
+          type: boolean
+          description: Gets or sets a flag that indicates whether this settigs object is
+            active.
+      description: Configuration for a data source connection.
+    DataSourceConfiguration:
+      type: object
+      properties:
+        dataSource:
+          type:
+            - "null"
+            - string
+          description: "Gets or sets the name of the data source (aka: a database)."
+        dataSourceEnum:
+          description: "Gets or sets the data source type.\r
+
+            This will one of the DataSourceTypes options."
+          $ref: "#/components/schemas/DataSourceTypes"
+        dataSourceName:
+          type:
+            - "null"
+            - string
+          description: "Gets or sets the name of the current data source settings
+            section.\r
+
+            This value will match an
+            Application.DataConnections[???].DataSourceName setting."
+        dataSourceType:
+          type:
+            - "null"
+            - string
+          description: "Gets or sets the data source type (e.g., \"SqlServer\",
+            \"PostgreSQL\").\r
+
+            This value must match one of the DataSourceTypes options, in string
+            form."
+        schema:
+          type:
+            - "null"
+            - string
+          description: "Gets or sets the data source schema (e.g., \"dbo\")\r
+
+            For best results, do not include delimiters ([,],\") on this value."
+        active:
+          type: boolean
+          description: Gets or sets a flag that indicates whether this settigs object is
+            active.
+      description: A base class for configuration objects.
+    DataSourceTypes:
+      type: integer
+      description: Enums for the available data sources.
     EmployeesDto:
       required:
         - employeeID
@@ -1262,6 +1402,96 @@ components:
           type:
             - "null"
             - string
+    IApplicationConfiguration:
+      type: object
+      properties:
+        dataConnections:
+          type:
+            - "null"
+            - array
+          items:
+            $ref: "#/components/schemas/DataConnectionConfiguration"
+          description: Gets or sets the list of data connection configurations for the
+            application.
+        dataSources:
+          type:
+            - "null"
+            - array
+          items:
+            $ref: "#/components/schemas/DataSourceConfiguration"
+          description: Gets or sets the list of data source configurations for the
+            application.
+        openApi:
+          oneOf:
+            - type: "null"
+            - description: Gets or sets an object with OpenApi settings.
+              $ref: "#/components/schemas/OpenApiConfiguration"
+        active:
+          type: boolean
+          description: Gets or sets a flag that indicates whether this settigs object is
+            active.
+      description: Configuration for the application.
+    OpenApiConfiguration:
+      type: object
+      properties:
+        contact:
+          oneOf:
+            - type: "null"
+            - description: Gets or sets a Contact object.
+              $ref: "#/components/schemas/OpenApiContactConfiguration"
+        description:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the OpenAPI Description.
+        license:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the OpenAPI License.
+        summary:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the OpenAPI Summary.
+        title:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the OpenAPI Title.
+        version:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the OpenAPI Version.
+        active:
+          type: boolean
+          description: Gets or sets a flag that indicates whether this settigs object is
+            active.
+      description: A base class for configuration objects.
+    OpenApiContactConfiguration:
+      type: object
+      properties:
+        email:
+          type:
+            - "null"
+            - string
+          description: Gets or sets an contactEmail.
+        name:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the contact Name.
+        url:
+          type:
+            - "null"
+            - string
+          description: Gets or sets the URL for the contact.
+        active:
+          type: boolean
+          description: Gets or sets a flag that indicates whether this settigs object is
+            active.
+      description: A base class for configuration objects.
     OrderDetailsDto:
       required:
         - discount

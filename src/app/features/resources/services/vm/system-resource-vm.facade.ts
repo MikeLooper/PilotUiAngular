@@ -5,6 +5,7 @@ import { SystemVmFacade, SystemVmState } from './resource-vm.models';
 const initialSystemState: SystemVmState = {
   isLoading: false,
   healthcheckResult: null,
+  aboutResult: null,
   errorMessage: null,
 };
 
@@ -32,6 +33,37 @@ export class SystemResourceVmFacade implements SystemVmFacade {
           ...current,
           isLoading: false,
           healthcheckResult: result,
+          errorMessage: null,
+        }));
+      },
+      error: (error: unknown) => {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? ((error as { message?: string }).message ?? 'Request failed.')
+            : 'Request failed.';
+
+        this.state.update((current) => ({
+          ...current,
+          isLoading: false,
+          errorMessage: message,
+        }));
+      },
+    });
+  }
+
+  public runAbout(): void {
+    this.state.update((current) => ({
+      ...current,
+      isLoading: true,
+      errorMessage: null,
+    }));
+
+    this.systemApiFacade.getAbout(true).subscribe({
+      next: (result) => {
+        this.state.update((current) => ({
+          ...current,
+          isLoading: false,
+          aboutResult: result,
           errorMessage: null,
         }));
       },

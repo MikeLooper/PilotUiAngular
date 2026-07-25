@@ -45,11 +45,49 @@ export class ApiErrorMapper {
       };
     }
 
+    if (error.status === 502 || error.status === 503 || error.status === 504) {
+      return {
+        kind: 'http',
+        status: error.status,
+        message: 'The API service is unavailable. Ensure the backend is running and try again.',
+        details: error.error,
+      };
+    }
+
+    const serverMessage = this.extractServerMessage(error.error);
+
     return {
       kind: 'http',
       status: error.status,
-      message: 'The server failed to process the request.',
+      message: serverMessage ?? 'The server failed to process the request.',
       details: error.error,
     };
+  }
+
+  private extractServerMessage(payload: unknown): string | null {
+    if (typeof payload === 'string') {
+      return payload.trim().length > 0 ? payload : null;
+    }
+
+    if (!payload || typeof payload !== 'object') {
+      return null;
+    }
+
+    const candidate = payload as {
+      message?: unknown;
+      detail?: unknown;
+      title?: unknown;
+      error?: unknown;
+    };
+
+    const values = [candidate.message, candidate.detail, candidate.title, candidate.error];
+
+    for (const value of values) {
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value;
+      }
+    }
+
+    return null;
   }
 }

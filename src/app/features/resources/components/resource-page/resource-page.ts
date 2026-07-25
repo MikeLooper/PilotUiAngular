@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +23,14 @@ const resourceKeys: readonly ResourceKey[] = [
 
 @Component({
   selector: 'app-resource-page',
-  imports: [FormsModule, ButtonComponent, HighlightDirective, RouterLink, RouterLinkActive],
+  imports: [
+    FormsModule,
+    JsonPipe,
+    ButtonComponent,
+    HighlightDirective,
+    RouterLink,
+    RouterLinkActive,
+  ],
   templateUrl: './resource-page.html',
   styleUrl: './resource-page.scss',
 })
@@ -125,6 +133,10 @@ export class ResourcePageComponent {
 
   protected onRunHealthcheck(): void {
     this.systemFacade.runHealthcheck();
+  }
+
+  protected onRunAbout(): void {
+    this.systemFacade.runAbout();
   }
 
   protected selectedSections(): readonly ResourceDetailSection[] {

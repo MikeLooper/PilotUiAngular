@@ -38,4 +38,35 @@ export class SystemResourceService {
       },
     });
   }
+
+  public runAbout(): void {
+    this.state.update((current) => ({
+      ...current,
+      loading: true,
+      error: null,
+    }));
+
+    this.systemApiFacade.getAbout(true).subscribe({
+      next: (value) => {
+        this.state.update((current) => ({
+          ...current,
+          loading: false,
+          itemResult: value,
+          error: null,
+        }));
+      },
+      error: (error: unknown) => {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? ((error as { message?: string }).message ?? 'Request failed')
+            : 'Request failed';
+
+        this.state.update((current) => ({
+          ...current,
+          loading: false,
+          error: message,
+        }));
+      },
+    });
+  }
 }

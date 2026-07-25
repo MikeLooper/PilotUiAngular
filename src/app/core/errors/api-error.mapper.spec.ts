@@ -23,4 +23,23 @@ describe('ApiErrorMapper', () => {
 
     expect(mapped.kind).toBe('validation');
   });
+
+  it('maps gateway and service unavailable failures with a backend-unavailable message', () => {
+    const error = new HttpErrorResponse({ status: 502 });
+    const mapped = mapper.toApiError(error);
+
+    expect(mapped.kind).toBe('http');
+    expect(mapped.message).toContain('API service is unavailable');
+  });
+
+  it('uses server-provided problem details when available for generic http errors', () => {
+    const error = new HttpErrorResponse({
+      status: 500,
+      error: { title: 'Database connection failed.' },
+    });
+    const mapped = mapper.toApiError(error);
+
+    expect(mapped.kind).toBe('http');
+    expect(mapped.message).toBe('Database connection failed.');
+  });
 });

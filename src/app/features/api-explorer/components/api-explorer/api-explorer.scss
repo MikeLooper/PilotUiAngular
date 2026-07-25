@@ -14,6 +14,12 @@
   margin: 0;
 }
 
+.explorer-page__header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .resource-links {
   display: flex;
   flex-wrap: wrap;

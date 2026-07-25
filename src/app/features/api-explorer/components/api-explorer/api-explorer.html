@@ -3,7 +3,10 @@
     <header class="explorer-page__header">
       <h2>API Explorer</h2>
       <p>Feature UI for consuming all generated facade endpoints across resources.</p>
-      <app-button label="Run System Healthcheck" [type]="'button'" (click)="runHealthcheck()"></app-button>
+      <div class="explorer-page__header-actions">
+        <app-button label="Run System Healthcheck" [type]="'button'" (click)="runHealthcheck()"></app-button>
+        <app-button label="Load About" [type]="'button'" (click)="runAbout()"></app-button>
+      </div>
       @if (healthState().itemResult) {
         <pre>{{ healthState().itemResult | json }}</pre>
       }

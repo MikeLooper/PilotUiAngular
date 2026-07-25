@@ -225,4 +225,8 @@ export class ApiExplorerComponent {
   protected runHealthcheck(): void {
     this.apiExplorerService.runHealthcheck();
   }
+
+  protected runAbout(): void {
+    this.apiExplorerService.runAbout();
+  }
 }
