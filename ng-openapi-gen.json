@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
+  "input": "docs/PilotApi_v1.yaml",
+  "output": "src/app/api/generated",
+  "indexFile": true,
+  "serviceSuffix": "Api",
+  "enumStyle": "alias",
+  "promises": false,
+  "module": false,
+  "apiService": "ApiClient",
+  "removeStaleFiles": true
+}

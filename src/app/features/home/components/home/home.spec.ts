@@ -1,17 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { SystemApiFacade } from '../../../../api/facades/system-api.facade';
 
-import { Home } from './home';
+import { HomePageComponent } from './home';
 
 describe('Home', () => {
-  let component: Home;
-  let fixture: ComponentFixture<Home>;
+  let component: HomePageComponent;
+  let fixture: ComponentFixture<HomePageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Home],
+      imports: [HomePageComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: SystemApiFacade,
+          useValue: {
+            getHealthcheck: () => of('Healthy'),
+            getAbout: () => of({ apiVersion: '1.0', deployDate: '2026-07-24' }),
+          },
+        },
+      ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Home);
+    fixture = TestBed.createComponent(HomePageComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

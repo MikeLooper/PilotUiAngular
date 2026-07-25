@@ -1,1 +1,17 @@
-<p>header works!</p>
+<header class="app-header">
+  <div class="brand" tabindex="0">
+    <span class="brand__badge" aria-hidden="true">PU</span>
+    <div class="brand__content">
+      <h1>{{ title() }}</h1>
+      <p>Angular SPA with OpenAPI-driven data access</p>
+    </div>
+  </div>
+
+  <nav class="main-nav" aria-label="Primary">
+    <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+      Home
+    </a>
+    <a routerLink="/resources" routerLinkActive="is-active">Resources</a>
+    <a routerLink="/explorer" routerLinkActive="is-active">API Explorer</a>
+  </nav>
+</header>

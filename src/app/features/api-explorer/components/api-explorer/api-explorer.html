@@ -1,0 +1,123 @@
+<section class="explorer-page">
+  @if (showHeader()) {
+    <header class="explorer-page__header">
+      <h2>API Explorer</h2>
+      <p>Feature UI for consuming all generated facade endpoints across resources.</p>
+      <div class="explorer-page__header-actions">
+        <app-button label="Run System Healthcheck" [type]="'button'" (click)="runHealthcheck()"></app-button>
+        <app-button label="Load About" [type]="'button'" (click)="runAbout()"></app-button>
+      </div>
+      @if (healthState().itemResult) {
+        <pre>{{ healthState().itemResult | json }}</pre>
+      }
+      @if (healthState().error; as healthError) {
+        <p class="error">{{ healthError }}</p>
+      }
+    </header>
+  }
+
+  @if (showNavigation() && !resourceKey()) {
+    <nav class="resource-links" aria-label="API resource quick links">
+      @for (section of sections; track section.key) {
+        <a [href]="'#' + section.key">{{ section.title }}</a>
+      }
+    </nav>
+  }
+
+  @for (section of visibleSections(); track section.key) {
+    <article class="resource-panel" [attr.id]="section.key">
+      <h3>{{ section.title }}</h3>
+
+      <div class="resource-panel__row">
+        <app-button label="Load All" [type]="'button'" (click)="section.loadAll()"></app-button>
+      </div>
+
+      <div class="resource-panel__row resource-panel__row--ids">
+        <label>
+          {{ section.idLabel }}
+          <input [(ngModel)]="section.form.getId" />
+        </label>
+
+        @if (section.secondIdLabel; as secondIdLabel) {
+          <label>
+            {{ secondIdLabel }}
+            <input [(ngModel)]="section.form.getSecondId" />
+          </label>
+        }
+
+        <app-button
+          label="Get By ID"
+          [type]="'button'"
+          (click)="section.getById(section.form.getId, section.form.getSecondId)"
+        ></app-button>
+      </div>
+
+      <div class="resource-panel__row resource-panel__row--payloads">
+        <label>
+          Add payload (JSON)
+          <textarea [(ngModel)]="section.form.addPayload"></textarea>
+        </label>
+        <app-button
+          label="Add"
+          [type]="'button'"
+          (click)="section.add(section.form.addPayload)"
+        ></app-button>
+      </div>
+
+      <div class="resource-panel__row resource-panel__row--payloads">
+        <label>
+          Update payload (JSON)
+          <textarea [(ngModel)]="section.form.updatePayload"></textarea>
+        </label>
+        <app-button
+          label="Update"
+          [type]="'button'"
+          (click)="section.update(section.form.updatePayload)"
+        ></app-button>
+      </div>
+
+      <div class="resource-panel__row resource-panel__row--ids">
+        <label>
+          {{ section.idLabel }}
+          <input [(ngModel)]="section.form.deleteId" />
+        </label>
+
+        @if (section.secondIdLabel; as secondDeleteIdLabel) {
+          <label>
+            {{ secondDeleteIdLabel }}
+            <input [(ngModel)]="section.form.deleteSecondId" />
+          </label>
+        }
+
+        <app-button
+          label="Delete"
+          [type]="'button'"
+          (click)="section.delete(section.form.deleteId, section.form.deleteSecondId)"
+        ></app-button>
+      </div>
+
+      @if (section.state().loading) {
+        <p>Request in progress...</p>
+      }
+
+      @if (section.state().error; as error) {
+        <p class="error">{{ error }}</p>
+      }
+
+      <div class="resource-panel__result-grid">
+        <div>
+          <h4>List Result</h4>
+          <pre>{{ section.state().listResult | json }}</pre>
+        </div>
+        <div>
+          <h4>Item Result</h4>
+          <pre>{{ section.state().itemResult | json }}</pre>
+        </div>
+        <div>
+          <h4>Mutation Result</h4>
+          <pre>{{ section.state().mutationResult | json }}</pre>
+        </div>
+      </div>
+    </article>
+  }
+</section>

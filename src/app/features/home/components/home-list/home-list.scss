@@ -1,0 +1,31 @@
+.category-list {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.category-item {
+  background: #ffffff;
+  border: 1px solid rgba(15, 39, 66, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.category-item h3 {
+  color: #103357;
+  margin: 0 0 0.45rem;
+}
+
+.category-item p {
+  color: #365b7f;
+  margin: 0;
+}
+
+.category-item small {
+  color: #627f9d;
+  display: block;
+  margin-top: 0.5rem;
+}

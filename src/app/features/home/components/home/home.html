@@ -1,1 +1,42 @@
-<p>home works!</p>
+<section class="home-page">
+  <header class="home-page__header">
+    <div class="home-page__branding">
+      <img src="/images/logo.png" alt="Pilot API logo" class="home-page__logo" />
+    </div>
+
+    <div class="home-page__actions">
+      <app-button
+        label="Refresh"
+        [type]="'button'"
+        [disabled]="vm().isLoading"
+        (click)="onReload()"
+      ></app-button>
+    </div>
+  </header>
+
+  @if (vm().isLoading) {
+    <p class="status" appHighlight="rgba(188, 220, 255, 0.7)">Loading API status...</p>
+  }
+
+  @if (vm().errorMessage; as errorMessage) {
+    <div class="error" role="alert">
+      <h3>Request failed</h3>
+      <p>{{ errorMessage }}</p>
+      <app-button label="Try Again" [type]="'button'" (click)="onReload()"></app-button>
+    </div>
+  }
+
+  <ul class="status-list">
+    <li>Connection to API: {{ vm().connectionToApi }}</li>
+    <li>API Version: {{ vm().apiVersion }}</li>
+    <li>API Deployed: {{ vm().apiDeployed }}</li>
+  </ul>
+
+  <section class="home-page__toc" aria-labelledby="home-toc-title">
+    <h3 id="home-toc-title">Table of Contents</h3>
+    <ul>
+      <li><a routerLink="/resources">Resources</a></li>
+      <li><a routerLink="/explorer">API Explorer</a></li>
+    </ul>
+  </section>
+</section>
