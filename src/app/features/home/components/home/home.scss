@@ -100,6 +100,45 @@
   text-decoration: underline;
 }
 
+.home-page__data-sources {
+  background: rgba(243, 250, 245, 0.88);
+  border: 1px solid rgba(17, 94, 62, 0.2);
+  border-radius: 12px;
+  margin-top: 1rem;
+  padding: 0.9rem;
+}
+
+.home-page__data-sources h3 {
+  color: #0f2742;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.home-page__data-sources-help {
+  color: #23563f;
+  margin: 0.45rem 0 0.75rem;
+}
+
+.home-page__data-source-list {
+  display: grid;
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-page__data-source-item {
+  align-items: flex-start;
+  column-gap: 0.55rem;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.home-page__data-source-item input {
+  margin-top: 0.2rem;
+}
+
 @media (max-width: 720px) {
   .home-page__branding {
     align-items: center;

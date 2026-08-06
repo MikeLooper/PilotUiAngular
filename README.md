@@ -65,6 +65,26 @@ npm run test
 npm run lint
 ```
 
+## Shared Module Submodule
+
+The shared code dependency is included as a Git submodule at:
+
+- `shared/PilotSharedSource`
+
+When cloning this repository for the first time, fetch the submodule contents with:
+
+```bash
+git submodule update --init --recursive
+```
+
+If the shared repository has new commits and you want to pull the latest tracked branch revision into this workspace, run:
+
+```bash
+git submodule update --remote --merge shared/PilotSharedSource
+```
+
+After the submodule updates, commit the new submodule pointer in this repository so other users get the same shared source revision.
+
 ## OpenAPI Client Generation
 
 OpenAPI source:
@@ -126,3 +146,8 @@ Values include:
 
 - Architecture guide: [docs/Application Architecture.md](docs/Application Architecture.md)
 - Implementation report: [docs/SPA Implementation Report.md](docs/SPA Implementation Report.md)
+
+
+## Development
+
+The design of this application was based upon the OpenAPI specification, found in the shared\PilotSharedSource directory (which is a submodule of [PilotSharedSource](https://github.com/MikeLooper/PilotSharedSource)).

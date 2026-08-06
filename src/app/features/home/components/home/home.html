@@ -39,4 +39,27 @@
       <li><a routerLink="/explorer">API Explorer</a></li>
     </ul>
   </section>
+
+  <section class="home-page__data-sources" aria-labelledby="home-data-sources-title">
+    <h3 id="home-data-sources-title">Active Data Source</h3>
+    <p class="home-page__data-sources-help">
+      Select the backend data source used for all API requests.
+    </p>
+
+    <ul class="home-page__data-source-list">
+      @for (source of dataSourceOptions; track source.id) {
+        <li>
+          <label class="home-page__data-source-item">
+            <input
+              type="radio"
+              name="active-data-source"
+              [checked]="selectedDataSource().id === source.id"
+              (change)="onDataSourceSelected(source.id)"
+            />
+            <span>{{ source.description }}</span>
+          </label>
+        </li>
+      }
+    </ul>
+  </section>
 </section>
