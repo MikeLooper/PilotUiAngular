@@ -35,7 +35,7 @@ export function setupFacadeTestbed<TFacade>(
           activeDataSource: () => ({
             id: 'dotnet-sqlserver',
             description: '.NET Core application with SQL Server',
-            basePort: 55551,
+            basePort: 55501,
           }),
         },
       },

@@ -16,7 +16,7 @@ Do not generate any source code at this time - only the text of the prompt."
 "Create a production-ready Angular single page application (SPA) that consumes a backend API defined by an OpenAPI specification file.
 
 Inputs
-- OpenAPI spec path or URL: C:\Working\Storage\Dev\GitHub\PilotUiAngular\docs\PilotApi_v1.yaml
+- OpenAPI spec path or URL: C:\Working\Storage\Dev\GitHub\PilotUiAngular\shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml
 - App name: PilotUiAngular
 - Preferred Angular version: latest stable
 - Styling approach: SCSS
@@ -152,16 +152,16 @@ Update the current application to consume the new 'about' endpoint, in a similar
 - The available data sources are as follows:
   | Data Source | Base Port |
   |---|---|
-  | .NET Core application with SQL Server | 55551 |
-  | .NET Core application with PostgreSQL | 55552 |
-  | Java Spring Boot application with SQL Server | 56661 |
-  | Java Spring Boot application with PostgreSQL | 56662 |
+  | .NET Core application with SQL Server | 55501 |
+  | .NET Core application with PostgreSQL | 55601 |
+  | Java Spring Boot application with SQL Server | 56601 |
+  | Java Spring Boot application with PostgreSQL | 56701 |
 - The API URLs used by this application will follow this pattern for the base URL: "http://localhost:{base-port}/"
 2. On the Home page: add a section, below the table of contents, where the active data source can be selected by the user.
 3. In the data sources section, list the four data source descriptions in such a way that the user can select which data source they would like to use.
 4. Default selection to the first available data source.
 5. Update all API URLs to use the Base Port from the selected data source.
-- For example: If ".NET Core application with SQL Server" is selected by the user, and the user triggers the action that calls the "categories/get" endpoint, the retrieval URL would be "http://localhost:55551/categories/get/1".
+- For example: If ".NET Core application with SQL Server" is selected by the user, and the user triggers the action that calls the "categories/get" endpoint, the retrieval URL would be "http://localhost:55501/categories/get/1".
 "
 
 ToDo:

@@ -1,54 +1,68 @@
+import { AppEnvironment, SourceApiId } from './app-config';
+
 export interface DataSourceOption {
   readonly id: string;
   readonly description: string;
+  readonly baseHostname: string;
   readonly basePort: number;
 }
 
-export const DATA_SOURCE_OPTIONS: readonly DataSourceOption[] = [
+const DATA_SOURCE_CATALOG: readonly { id: SourceApiId; description: string }[] = [
   {
     id: 'dotnet-sqlserver',
     description: '.NET Core application with SQL Server',
-    basePort: 55551,
   },
   {
     id: 'dotnet-postgresql',
     description: '.NET Core application with PostgreSQL',
-    basePort: 55552,
   },
   {
     id: 'java-sqlserver',
     description: 'Java Spring Boot application with SQL Server',
-    basePort: 56661,
   },
   {
     id: 'java-postgresql',
     description: 'Java Spring Boot application with PostgreSQL',
-    basePort: 56662,
   },
 ];
 
-export const DEFAULT_DATA_SOURCE: DataSourceOption = DATA_SOURCE_OPTIONS[0]!;
-
-export function getDataSourceBaseUrl(basePort: number): string {
-  return `http://localhost:${basePort}`;
+export function buildDataSourceOptions(environment: AppEnvironment): readonly DataSourceOption[] {
+  return DATA_SOURCE_CATALOG.map((entry) => ({
+    id: entry.id,
+    description: entry.description,
+    baseHostname: environment.sourceApiConnections[entry.id].hostname,
+    basePort: environment.sourceApiConnections[entry.id].port,
+  }));
 }
 
-export function getDataSourceApiBaseUrl(basePort: number, configuredBaseUrl: string): string {
+export function getDataSourceBaseUrl(baseHostname: string, basePort: number): string {
+  return `http://${baseHostname}:${basePort}`;
+}
+
+export function getDataSourceApiBaseUrl(
+  source: DataSourceOption,
+  configuredBaseUrl: string
+): string {
   // Development uses relative proxy paths; production uses direct localhost URLs.
   if (configuredBaseUrl.startsWith('/')) {
-    return `${normalizeBaseUrl(configuredBaseUrl)}/${basePort}`;
+    return `${normalizeBaseUrl(configuredBaseUrl)}/${source.basePort}`;
   }
 
-  return getDataSourceBaseUrl(basePort);
+  return getDataSourceBaseUrl(source.baseHostname, source.basePort);
 }
 
 export function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, '');
 }
 
-export function resolveDataSourceByBaseUrl(baseUrl: string): DataSourceOption | undefined {
+export function resolveDataSourceByBaseUrl(
+  baseUrl: string,
+  options: readonly DataSourceOption[]
+): DataSourceOption | undefined {
   const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
-  return DATA_SOURCE_OPTIONS.find(
-    (source) => getDataSourceBaseUrl(source.basePort) === normalizedBaseUrl
+  return options.find(
+    (source) =>
+      normalizeBaseUrl(getDataSourceBaseUrl(source.baseHostname, source.basePort)) ===
+      normalizedBaseUrl
   );
 }

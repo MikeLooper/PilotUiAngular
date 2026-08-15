@@ -2,8 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '../../api/generated';
 import { APP_ENV } from '../config/app-config';
 import {
-  DATA_SOURCE_OPTIONS,
-  DEFAULT_DATA_SOURCE,
+  buildDataSourceOptions,
   DataSourceOption,
   getDataSourceApiBaseUrl,
   normalizeBaseUrl,
@@ -15,7 +14,7 @@ export class DataSourceService {
   private readonly apiClient = inject(ApiClient);
   private readonly env = inject(APP_ENV);
 
-  public readonly options = DATA_SOURCE_OPTIONS;
+  public readonly options = buildDataSourceOptions(this.env);
 
   private readonly selectedDataSourceState = signal<DataSourceOption>(
     this.resolveInitialDataSource()
@@ -23,7 +22,7 @@ export class DataSourceService {
 
   public readonly activeDataSource = computed(() => this.selectedDataSourceState());
   public readonly activeBaseUrl = computed(() =>
-    getDataSourceApiBaseUrl(this.selectedDataSourceState().basePort, this.env.apiBaseUrl)
+    getDataSourceApiBaseUrl(this.selectedDataSourceState(), this.env.apiBaseUrl)
   );
 
   public constructor() {
@@ -41,7 +40,7 @@ export class DataSourceService {
   }
 
   private resolveInitialDataSource(): DataSourceOption {
-    return resolveDataSourceByBaseUrl(this.env.apiBaseUrl) ?? DEFAULT_DATA_SOURCE;
+    return resolveDataSourceByBaseUrl(this.env.apiBaseUrl, this.options) ?? this.options[0]!;
   }
 
   private syncApiClientRootUrl(baseUrl: string): void {

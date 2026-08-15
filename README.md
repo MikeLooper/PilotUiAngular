@@ -89,7 +89,7 @@ After the submodule updates, commit the new submodule pointer in this repository
 
 OpenAPI source:
 
-- docs/PilotApi_v1.yaml
+- shared/PilotSharedSource/OpenAPI/PilotApi_v1.yaml
 
 Generation config:
 
