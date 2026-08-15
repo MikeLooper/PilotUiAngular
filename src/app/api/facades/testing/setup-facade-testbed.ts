@@ -7,6 +7,7 @@ import {
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ApiConfiguration } from '../../generated';
+import { DataSourceService } from '../../../core/services/data-source';
 
 interface FacadeTestContext<TFacade> {
   facade: TFacade;
@@ -27,6 +28,16 @@ export function setupFacadeTestbed<TFacade>(
       {
         provide: ApiConfiguration,
         useValue: apiConfiguration,
+      },
+      {
+        provide: DataSourceService,
+        useValue: {
+          activeDataSource: () => ({
+            id: 'dotnet-sqlserver',
+            description: '.NET Core application with SQL Server',
+            basePort: 55501,
+          }),
+        },
       },
     ],
   });

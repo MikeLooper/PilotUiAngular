@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
-import { APP_ENV } from '../config/app-config';
 import { ApiService } from './api';
+import { DataSourceService } from './data-source';
 
 describe('ApiService', () => {
   let service: ApiService;
@@ -10,12 +10,9 @@ describe('ApiService', () => {
     TestBed.configureTestingModule({
       providers: [
         {
-          provide: APP_ENV,
+          provide: DataSourceService,
           useValue: {
-            production: false,
-            apiBaseUrl: 'http://localhost:53060',
-            apiVersion: '1.0',
-            requestTimeoutMs: 15000,
+            activeBaseUrl: () => 'http://localhost:55501',
           },
         },
       ],

@@ -1,0 +1,4 @@
+[submodule "shared/PilotSharedSource"]
+	path = shared/PilotSharedSource
+	url = https://github.com/MikeLooper/PilotSharedSource
+	branch = main

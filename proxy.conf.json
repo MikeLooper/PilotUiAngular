@@ -1,10 +1,34 @@
 {
-  "/api": {
-    "target": "http://localhost:55551",
+  "/api/55501": {
+    "target": "http://localhost:55501",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api": ""
+      "^/api/55501": ""
+    }
+  },
+  "/api/55601": {
+    "target": "http://localhost:55601",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/55601": ""
+    }
+  },
+  "/api/56601": {
+    "target": "http://localhost:56601",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/56601": ""
+    }
+  },
+  "/api/56701": {
+    "target": "http://localhost:56701",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/56701": ""
     }
   }
 }
