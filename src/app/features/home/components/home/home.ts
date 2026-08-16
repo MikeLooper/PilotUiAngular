@@ -18,6 +18,7 @@ export class HomePageComponent {
   public readonly vm = this.homeFacade.vm;
   public readonly dataSourceOptions = this.dataSourceService.options;
   public readonly selectedDataSource = this.dataSourceService.activeDataSource;
+  public readonly activeBaseUrl = this.dataSourceService.activeBaseUrl;
 
   public onReload(): void {
     this.homeFacade.reload();
