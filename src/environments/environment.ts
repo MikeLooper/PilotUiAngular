@@ -2,7 +2,8 @@ import { AppEnvironment } from '../app/core/config/app-config';
 
 export const environment: AppEnvironment = {
   production: true,
-  apiBaseUrl: 'http://localhost:55501',
+  // Nginx proxies /api/<port> to the API containers on the pilot-net network.
+  apiBaseUrl: '/api',
   sourceApiConnections: {
     'dotnet-sqlserver': { hostname: 'localhost', port: 55501 },
     'dotnet-postgresql': { hostname: 'localhost', port: 55601 },

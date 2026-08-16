@@ -27,7 +27,7 @@
   }
 
   <ul class="status-list">
-    <li>Connection to API: {{ vm().connectionToApi }}</li>
+    <li>Connection to API: {{ vm().connectionToApi }} <pre style="display: inline;">&#9;&#9;&#9;</pre>({{ activeBaseUrl() }})</li>
     <li>API Version: {{ vm().apiVersion }}</li>
     <li>API Deployed: {{ vm().apiDeployed }}</li>
   </ul>

@@ -37,6 +37,7 @@ describe('Home', () => {
               description: '.NET Core application with SQL Server',
               basePort: 55501,
             }),
+            activeBaseUrl: () => 'http://localhost:55501',
             selectDataSourceById: () => undefined,
           },
         },
@@ -50,5 +51,13 @@ describe('Home', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('displays the active API URL beside the connection status', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      'Connection to API: Healthy (http://localhost:55501)'
+    );
   });
 });
