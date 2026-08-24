@@ -3,6 +3,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 
 import { authInterceptor } from './auth-interceptor';
 import { APP_ENV } from '../config/app-config';
+import { environment } from '../../../environments/environment.development';
 
 describe('authInterceptor', () => {
   const interceptor: HttpInterceptorFn = (req, next) =>
@@ -14,16 +15,8 @@ describe('authInterceptor', () => {
         {
           provide: APP_ENV,
           useValue: {
-            production: false,
+            ...environment,
             apiBaseUrl: 'http://localhost:53060',
-            sourceApiConnections: {
-              'dotnet-sqlserver': { hostname: 'localhost', port: 55501 },
-              'dotnet-postgresql': { hostname: 'localhost', port: 55601 },
-              'java-sqlserver': { hostname: 'localhost', port: 56601 },
-              'java-postgresql': { hostname: 'localhost', port: 56701 },
-            },
-            apiVersion: '1.0',
-            requestTimeoutMs: 15000,
           },
         },
       ],

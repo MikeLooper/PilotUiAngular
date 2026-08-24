@@ -24,6 +24,14 @@ const DATA_SOURCE_CATALOG: readonly { id: SourceApiId; description: string }[] =
     id: 'java-postgresql',
     description: 'Java Spring Boot application with PostgreSQL',
   },
+  {
+    id: 'python-sqlserver',
+    description: 'Python application with SQL Server',
+  },
+  {
+    id: 'python-postgresql',
+    description: 'Python application with PostgreSQL',
+  },
 ];
 
 export function buildDataSourceOptions(environment: AppEnvironment): readonly DataSourceOption[] {

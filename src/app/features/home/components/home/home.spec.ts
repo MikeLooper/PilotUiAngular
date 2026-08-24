@@ -3,12 +3,16 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { SystemApiFacade } from '../../../../api/facades/system-api.facade';
 import { DataSourceService } from '../../../../core/services/data-source';
+import { environment } from '../../../../../environments/environment.development';
 
 import { HomePageComponent } from './home';
 
 describe('Home', () => {
   let component: HomePageComponent;
   let fixture: ComponentFixture<HomePageComponent>;
+  const dotnetSqlServerConnection = environment.sourceApiConnections['dotnet-sqlserver'];
+  const dotnetSqlServerUrl =
+    `http://${dotnetSqlServerConnection.hostname}:${dotnetSqlServerConnection.port}`;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -29,15 +33,15 @@ describe('Home', () => {
               {
                 id: 'dotnet-sqlserver',
                 description: '.NET Core application with SQL Server',
-                basePort: 55501,
+                basePort: dotnetSqlServerConnection.port,
               },
             ],
             activeDataSource: () => ({
               id: 'dotnet-sqlserver',
               description: '.NET Core application with SQL Server',
-              basePort: 55501,
+              basePort: dotnetSqlServerConnection.port,
             }),
-            activeBaseUrl: () => 'http://localhost:55501',
+            activeBaseUrl: () => dotnetSqlServerUrl,
             selectDataSourceById: () => undefined,
           },
         },
@@ -55,9 +59,10 @@ describe('Home', () => {
 
   it('displays the active API URL beside the connection status', () => {
     fixture.detectChanges();
+    const pageText = fixture.nativeElement.textContent.replace(/\s+/g, ' ');
 
-    expect(fixture.nativeElement.textContent).toContain(
-      'Connection to API: Healthy (http://localhost:55501)'
+    expect(pageText).toContain(
+      `Connection to API: Healthy (${dotnetSqlServerUrl})`
     );
   });
 });
