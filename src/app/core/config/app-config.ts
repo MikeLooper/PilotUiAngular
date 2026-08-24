@@ -4,7 +4,9 @@ export type SourceApiId =
   | 'dotnet-sqlserver'
   | 'dotnet-postgresql'
   | 'java-sqlserver'
-  | 'java-postgresql';
+  | 'java-postgresql'
+  | 'python-sqlserver'
+  | 'python-postgresql';
 
 export interface SourceApiConnection {
   readonly hostname: string;

@@ -8,6 +8,7 @@ import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ApiConfiguration } from '../../generated';
 import { DataSourceService } from '../../../core/services/data-source';
+import { environment } from '../../../../environments/environment.development';
 
 interface FacadeTestContext<TFacade> {
   facade: TFacade;
@@ -18,6 +19,7 @@ export function setupFacadeTestbed<TFacade>(
   facadeType: Type<TFacade>,
   rootUrl = 'http://localhost:53060'
 ): FacadeTestContext<TFacade> {
+  const defaultConnection = environment.sourceApiConnections['dotnet-sqlserver'];
   const apiConfiguration = new ApiConfiguration();
   apiConfiguration.rootUrl = rootUrl;
 
@@ -35,7 +37,7 @@ export function setupFacadeTestbed<TFacade>(
           activeDataSource: () => ({
             id: 'dotnet-sqlserver',
             description: '.NET Core application with SQL Server',
-            basePort: 55501,
+            basePort: defaultConnection.port,
           }),
         },
       },
