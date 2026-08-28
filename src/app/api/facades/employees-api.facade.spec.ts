@@ -23,7 +23,7 @@ describe('EmployeesApiFacade', () => {
       firstName = result.firstName;
     });
 
-    const request = expectGet(httpMock, 'http://localhost:53060/employees/get/1');
+    const request = expectGet(httpMock, 'http://localhost:53060/v1/employees/get/1');
     request.flush({ employeeID: 1, firstName: 'Nancy', lastName: 'Davolio' });
 
     expect(firstName).toBe('Nancy');

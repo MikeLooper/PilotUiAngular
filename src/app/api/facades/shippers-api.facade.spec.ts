@@ -24,7 +24,7 @@ describe('ShippersApiFacade', () => {
       expect(result[0]?.companyName).toBe('Speedy Express');
     });
 
-    const request = expectGet(httpMock, 'http://localhost:53060/shippers/get-all');
+    const request = expectGet(httpMock, 'http://localhost:53060/v1/shippers/get-all');
     request.flush([{ shipperID: 1, companyName: 'Speedy Express' }]);
 
     expect(resultLength).toBe(1);
