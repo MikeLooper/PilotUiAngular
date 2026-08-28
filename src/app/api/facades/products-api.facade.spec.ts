@@ -23,7 +23,7 @@ describe('ProductsApiFacade', () => {
       completed = result === undefined;
     });
 
-    const request = expectPut(httpMock, 'http://localhost:53060/products/update');
+    const request = expectPut(httpMock, 'http://localhost:53060/v1/products/update');
     request.flush({});
 
     expect(completed).toBe(true);

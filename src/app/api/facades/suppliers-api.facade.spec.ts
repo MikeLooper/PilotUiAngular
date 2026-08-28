@@ -23,7 +23,7 @@ describe('SuppliersApiFacade', () => {
       createdId = result.id;
     });
 
-    const request = expectPost(httpMock, 'http://localhost:53060/suppliers/add');
+    const request = expectPost(httpMock, 'http://localhost:53060/v1/suppliers/add');
     request.flush({ id: 91 });
 
     expect(createdId).toBe(91);

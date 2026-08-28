@@ -23,7 +23,7 @@ describe('OrdersApiFacade', () => {
       completed = result === undefined;
     });
 
-    const request = expectDelete(httpMock, 'http://localhost:53060/orders/delete/11077');
+    const request = expectDelete(httpMock, 'http://localhost:53060/v1/orders/delete/11077');
     request.flush({});
 
     expect(completed).toBe(true);

@@ -24,7 +24,7 @@ describe('CategoriesApiFacade', () => {
       expect(result[0]?.name).toBe('Beverages');
     });
 
-    const request = expectGet(httpMock, 'http://localhost:53060/categories/get-all');
+    const request = expectGet(httpMock, 'http://localhost:53060/v1/categories/get-all');
 
     request.flush([
       {

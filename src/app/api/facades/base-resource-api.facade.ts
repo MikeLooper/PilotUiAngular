@@ -1,10 +1,10 @@
 import { effect, inject } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
-import { ApiClient } from '../generated';
 import { DataSourceService } from '../../core/services/data-source';
+import { DomainApiClient } from './domain-api-client';
 
 export abstract class BaseResourceApiFacade<TItem> {
-  protected readonly apiClient = inject(ApiClient);
+  protected readonly apiClient = inject(DomainApiClient);
   private readonly dataSourceService = inject(DataSourceService);
   private readonly clearCacheOnDataSourceChange = effect(() => {
     this.dataSourceService.activeDataSource();
