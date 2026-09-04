@@ -1,4 +1,23 @@
 {
+  "/idp": {
+    "target": "http://localhost:55001",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/idp": ""
+    },
+    "headers": {
+      "Origin": "http://localhost:55001"
+    }
+  },
+  "/api/55099": {
+    "target": "http://localhost:55099",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/55099": ""
+    }
+  },
   "/api/55101": {
     "target": "http://localhost:55101",
     "secure": false,

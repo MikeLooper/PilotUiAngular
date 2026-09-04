@@ -44,3 +44,4 @@ __screenshots__/
 Thumbs.db
 /.vs
 /.vscode
+/public/security-token-secrets.json

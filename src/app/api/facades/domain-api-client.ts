@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs/operators';
 import { ApiClient, ApiFnOptional, ApiFnRequired } from '../generated/api-client';
 import { StrictHttpResponse } from '../generated/strict-http-response';
 
-const DOMAIN_API_VERSION_SEGMENT = 'v1';
+export const DOMAIN_API_VERSION_SEGMENT = 'v1';
 
 /**
  * Invokes domain resource endpoints (categories, customers, etc.) under a

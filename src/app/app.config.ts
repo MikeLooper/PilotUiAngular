@@ -10,6 +10,7 @@ import { GlobalErrorHandler } from './core/errors/global-error-handler';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
 import { errorHandlingInterceptor } from './core/interceptors/error-handling-interceptor';
 import { loadingInterceptor } from './core/interceptors/loading-interceptor';
+import { securityTokenInterceptor } from './core/interceptors/security-token-interceptor';
 import { provideApiClient } from './api/providers/api-client.provider';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment.development';
@@ -19,7 +20,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authInterceptor, loadingInterceptor, errorHandlingInterceptor])
+      withInterceptors([
+        authInterceptor,
+        securityTokenInterceptor,
+        loadingInterceptor,
+        errorHandlingInterceptor,
+      ])
     ),
     provideAppEnvironment(environment),
     provideApiClient(),
