@@ -8,4 +8,12 @@ export const environment: AppEnvironment = {
   sourceApiConnections,
   apiVersion: '1.0',
   requestTimeoutMs: 15000,
+  securityToken: {
+    active: true,
+    // Resolved on the pilot-net Docker network, alongside the API containers.
+    baseUrl: 'http://localhost:55001',
+    realm: 'local-realm',
+    clientId: 'local-client',
+    // Username/password are loaded at runtime from /security-token-secrets.json (see SecurityTokenService).
+  },
 };
