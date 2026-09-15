@@ -5,7 +5,7 @@ export const environment: AppEnvironment = {
   production: false,
   apiBaseUrl: '/api',
   sourceApiConnections,
-  apiVersion: '1.0',
+  apiVersion: '1.1',
   requestTimeoutMs: 15000,
   securityToken: {
     active: true,
