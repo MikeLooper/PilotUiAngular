@@ -40,12 +40,12 @@ describe('SystemApiFacade', () => {
     const request = expectGet(httpMock, 'http://localhost:53060/about?show-details=true');
     request.flush({
       name: 'PilotApiDotNet',
-      apiVersion: '0.1.1',
+      apiVersion: '1.1.2',
     });
 
     expect(about).toEqual({
       name: 'PilotApiDotNet',
-      apiVersion: '0.1.1',
+      apiVersion: '1.1.2',
     });
   });
 });

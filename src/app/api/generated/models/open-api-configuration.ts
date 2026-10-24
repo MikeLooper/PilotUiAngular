@@ -9,7 +9,7 @@ import { OpenApiContactConfiguration } from '../models/open-api-contact-configur
 export interface OpenApiConfiguration {
 
   /**
-   * Gets or sets a flag that indicates whether this settigs object is active.
+   * Gets or sets a flag that indicates whether this settings object is active.
    */
   active?: boolean;
   contact?: (null | OpenApiContactConfiguration);

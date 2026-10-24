@@ -3,8 +3,8 @@
 
 export interface OrderDetailsDto {
   discount: (number | string);
-  orderID: (number | string);
-  productID: (number | string);
+  orderId: (number | string);
+  productId: (number | string);
   quantity: (number | string);
   unitPrice: (number | string);
 }

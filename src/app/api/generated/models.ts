@@ -3,6 +3,8 @@
 
 export type { AboutResponse } from './models/about-response';
 export type { AddResponseInt } from './models/add-response-int';
+export type { AddResponseOrderDetails } from './models/add-response-order-details';
+export type { AddResponseString } from './models/add-response-string';
 export type { CategoriesDto } from './models/categories-dto';
 export type { CustomersDto } from './models/customers-dto';
 export type { DataConnectionConfiguration } from './models/data-connection-configuration';
@@ -12,9 +14,12 @@ export type { EmployeesDto } from './models/employees-dto';
 export type { IApplicationConfiguration } from './models/i-application-configuration';
 export type { OpenApiConfiguration } from './models/open-api-configuration';
 export type { OpenApiContactConfiguration } from './models/open-api-contact-configuration';
+export type { OpenTelemetryConfiguration } from './models/open-telemetry-configuration';
 export type { OrderDetailsDto } from './models/order-details-dto';
 export type { OrdersDto } from './models/orders-dto';
 export type { ProblemDetails } from './models/problem-details';
+export type { ProblemDetailsBadRequest } from './models/problem-details-bad-request';
 export type { ProductsDto } from './models/products-dto';
+export type { SecurityConfiguration } from './models/security-configuration';
 export type { ShippersDto } from './models/shippers-dto';
 export type { SuppliersDto } from './models/suppliers-dto';

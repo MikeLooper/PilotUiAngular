@@ -28,7 +28,7 @@ describe('CategoriesApiFacade', () => {
 
     request.flush([
       {
-        categoryID: 1,
+        categoryId: 1,
         categoryName: 'Beverages',
         description: 'Soft drinks',
       },

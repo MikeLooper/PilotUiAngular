@@ -32,7 +32,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
   protected createSampleDto(): ShippersDto {
     return {
-      shipperID: 0,
+      shipperId: 0,
       companyName: 'Sample Shipper',
       phone: '555-0110',
     };
@@ -40,7 +40,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
   protected updateSampleDto(primaryId?: string): ShippersDto {
     return {
-      shipperID: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      shipperId: this.asNumberishId(primaryId, this.defaultPrimaryId),
       companyName: 'Updated Shipper',
       phone: '555-0111',
     };
@@ -60,8 +60,8 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
   protected mapDtoToRecord(dto: ShippersDto): ResourceRecord {
     return {
-      primaryId: String(dto.shipperID),
-      title: dto.companyName?.trim() || `Shipper #${dto.shipperID}`,
+      primaryId: String(dto.shipperId),
+      title: dto.companyName?.trim() || `Shipper #${dto.shipperId}`,
       subtitle: dto.phone?.trim() || 'No phone',
       raw: dto,
     };
@@ -72,7 +72,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
     return [
       this.createFieldsSection('Shipper profile', [
-        { label: 'Shipper ID', value: shipper.shipperID },
+        { label: 'Shipper ID', value: shipper.shipperId },
         { label: 'Company', value: shipper.companyName },
         { label: 'Phone', value: shipper.phone },
       ]),

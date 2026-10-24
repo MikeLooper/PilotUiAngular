@@ -8,7 +8,7 @@ export interface CustomersDto {
   contactName?: (string | null);
   contactTitle?: (string | null);
   country?: (string | null);
-  customerID: (string | null);
+  customerId: (string | null);
   fax?: (string | null);
   phone?: (string | null);
   postalCode?: (string | null);

@@ -155,8 +155,8 @@ Update the current application to consume the new 'about' endpoint, in a similar
 - The available data sources are as follows:
   | Data Source | Base Port |
   |---|---|
-  | .NET Core application with SQL Server | 55501 |
-  | .NET Core application with PostgreSQL | 55601 |
+ | .NET Core application with SQL Server | 11001 |
+ | .NET Core application with PostgreSQL | 11101 |
   | Java Spring Boot application with SQL Server | 56601 |
   | Java Spring Boot application with PostgreSQL | 56701 |
 - The API URLs used by this application will follow this pattern for the base URL: "http://localhost:{base-port}/"
@@ -164,7 +164,7 @@ Update the current application to consume the new 'about' endpoint, in a similar
 3. In the data sources section, list the four data source descriptions in such a way that the user can select which data source they would like to use.
 4. Default selection to the first available data source.
 5. Update all API URLs to use the Base Port from the selected data source.
-- For example: If ".NET Core application with SQL Server" is selected by the user, and the user triggers the action that calls the "categories/get" endpoint, the retrieval URL would be "http://localhost:55501/categories/get/1".
+- For example: If ".NET Core application with SQL Server" is selected by the user, and the user triggers the action that calls the "categories/get" endpoint, the retrieval URL would be "http://localhost:11401/categories/get/1".
 "
 
 19.
@@ -198,7 +198,7 @@ Variables + configuration:
     - name: IdpHostBaseUrl
       value:
 			- Production: http://local-keycloak:8080
-			- Development: http://localhost:55001
+			- Development: http://localhost:11141
       description: Base URL of the local Security server used to obtain a bearer token.
     - name: IdpHostRealm
       value: local-realm
@@ -212,4 +212,7 @@ Variables + configuration:
 
 IdpHostPassword will be read from the IDP_HOST_PASSWORD environment variable.
 
-
+20.
+Examine the source OpenAPI specification in `shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml`.
+Check the application to verify the API calls match the source OpenAPI specification, and correct the code to match the source OpenAPI specification as needed.
+The non-System API calls include a `X-Correlation-Id` header.  Verify these endpoint calls pass that header with a valid value.  If not being passed correctly, include the header with a new GUID value.

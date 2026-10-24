@@ -9,13 +9,11 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface HealthcheckGet$Params {
-  ApiVersion?: string;
 }
 
 export function healthcheckGet(http: HttpClient, rootUrl: string, params?: HealthcheckGet$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
   const rb = new RequestBuilder(rootUrl, healthcheckGet.PATH, 'get');
   if (params) {
-    rb.header('ApiVersion', params.ApiVersion, {});
   }
 
   return http.request(

@@ -25,7 +25,7 @@ describe('CustomersApiFacade', () => {
     });
 
     const request = expectGet(httpMock, 'http://localhost:53060/v1/customers/get-all');
-    request.flush([{ customerID: 'ALFKI', companyName: 'Alfreds Futterkiste' }]);
+    request.flush([{ customerId: 'ALFKI', companyName: 'Alfreds Futterkiste' }]);
 
     expect(resultLength).toBe(1);
   });
@@ -34,7 +34,7 @@ describe('CustomersApiFacade', () => {
     let createdId: number | string | undefined;
 
     facade
-      .add({ customerID: 'NEW01', companyName: 'New Co' })
+      .add({ customerId: 'NEW01', companyName: 'New Co' })
       .subscribe((result) => (createdId = result.id));
 
     const request = expectPost(httpMock, 'http://localhost:53060/v1/customers/add');

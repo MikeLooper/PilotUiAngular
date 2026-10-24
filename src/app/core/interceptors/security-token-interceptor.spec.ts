@@ -27,7 +27,7 @@ function configure(securityToken: SecurityTokenConfig, tokenServiceStub: Partial
 describe('securityTokenInterceptor', () => {
   const activeConfig: SecurityTokenConfig = {
     active: true,
-    baseUrl: 'http://localhost:55001',
+    baseUrl: 'http://localhost:11141',
     realm: 'local-realm',
     clientId: 'local-client',
   };

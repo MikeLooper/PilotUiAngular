@@ -13,5 +13,5 @@ export interface SuppliersDto {
   phone?: (string | null);
   postalCode?: (string | null);
   region?: (string | null);
-  supplierID: (number | string);
+  supplierId?: (number | string | null);
 }

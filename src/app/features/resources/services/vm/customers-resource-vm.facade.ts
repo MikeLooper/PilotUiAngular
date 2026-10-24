@@ -33,7 +33,7 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
 
   protected createSampleDto(): CustomersDto {
     return {
-      customerID: 'NEW01',
+      customerId: 'NEW01',
       companyName: 'Sample Customer Co',
       contactName: 'Sample Contact',
       city: 'Seattle',
@@ -43,7 +43,7 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
 
   protected updateSampleDto(primaryId?: string): CustomersDto {
     return {
-      customerID: primaryId || this.defaultPrimaryId,
+      customerId: primaryId || this.defaultPrimaryId,
       companyName: 'Updated Customer Co',
       contactName: 'Updated Contact',
       city: 'Portland',
@@ -65,7 +65,7 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
 
   protected mapDtoToRecord(dto: CustomersDto): ResourceRecord {
     return {
-      primaryId: String(dto.customerID ?? ''),
+      primaryId: String(dto.customerId ?? ''),
       title: dto.companyName?.trim() || 'Unnamed customer',
       subtitle: [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
@@ -77,7 +77,7 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
 
     return [
       this.createFieldsSection('Customer profile', [
-        { label: 'Customer ID', value: customer.customerID },
+        { label: 'Customer ID', value: customer.customerId },
         { label: 'Company', value: customer.companyName },
         { label: 'Contact', value: customer.contactName },
         { label: 'Title', value: customer.contactTitle },

@@ -4,6 +4,8 @@
 import { DataConnectionConfiguration } from '../models/data-connection-configuration';
 import { DataSourceConfiguration } from '../models/data-source-configuration';
 import { OpenApiConfiguration } from '../models/open-api-configuration';
+import { OpenTelemetryConfiguration } from '../models/open-telemetry-configuration';
+import { SecurityConfiguration } from '../models/security-configuration';
 
 /**
  * Configuration for the application.
@@ -11,7 +13,7 @@ import { OpenApiConfiguration } from '../models/open-api-configuration';
 export interface IApplicationConfiguration {
 
   /**
-   * Gets or sets a flag that indicates whether this settigs object is active.
+   * Gets or sets a flag that indicates whether this settings object is active.
    */
   active?: boolean;
 
@@ -25,4 +27,6 @@ export interface IApplicationConfiguration {
    */
   dataSources?: (Array<DataSourceConfiguration> | null);
   openApi?: (null | OpenApiConfiguration);
+  openTelemetry?: (null | OpenTelemetryConfiguration);
+  security?: (null | SecurityConfiguration);
 }

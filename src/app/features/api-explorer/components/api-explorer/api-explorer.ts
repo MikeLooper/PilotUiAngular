@@ -52,9 +52,9 @@ export class ApiExplorerComponent {
         deleteId: '1',
         deleteSecondId: '',
         addPayload:
-          '{\n  "categoryID": 0,\n  "categoryName": "New category",\n  "description": "Description",\n  "picture": null\n}',
+          '{\n  "categoryId": 0,\n  "categoryName": "New category",\n  "description": "Description",\n  "picture": null\n}',
         updatePayload:
-          '{\n  "categoryID": 1,\n  "categoryName": "Updated category",\n  "description": "Updated description",\n  "picture": null\n}',
+          '{\n  "categoryId": 1,\n  "categoryName": "Updated category",\n  "description": "Updated description",\n  "picture": null\n}',
       },
       loadAll: () => this.apiExplorerService.loadCategories(),
       getById: (id) => this.apiExplorerService.getCategoryById(id),
@@ -73,9 +73,9 @@ export class ApiExplorerComponent {
         deleteId: 'ALFKI',
         deleteSecondId: '',
         addPayload:
-          '{\n  "customerID": "NEW01",\n  "companyName": "New Company",\n  "contactName": "Jane Doe",\n  "contactTitle": "Owner",\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0100",\n  "fax": null\n}',
+          '{\n  "customerId": "NEW01",\n  "companyName": "New Company",\n  "contactName": "Jane Doe",\n  "contactTitle": "Owner",\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0100",\n  "fax": null\n}',
         updatePayload:
-          '{\n  "customerID": "ALFKI",\n  "companyName": "Updated Company",\n  "contactName": "Maria Anders",\n  "contactTitle": "Sales",\n  "address": "Obere Str. 57",\n  "city": "Berlin",\n  "region": null,\n  "postalCode": "12209",\n  "country": "Germany",\n  "phone": "030-0074321",\n  "fax": "030-0076545"\n}',
+          '{\n  "customerId": "ALFKI",\n  "companyName": "Updated Company",\n  "contactName": "Maria Anders",\n  "contactTitle": "Sales",\n  "address": "Obere Str. 57",\n  "city": "Berlin",\n  "region": null,\n  "postalCode": "12209",\n  "country": "Germany",\n  "phone": "030-0074321",\n  "fax": "030-0076545"\n}',
       },
       loadAll: () => this.apiExplorerService.loadCustomers(),
       getById: (id) => this.apiExplorerService.getCustomerById(id),
@@ -94,9 +94,9 @@ export class ApiExplorerComponent {
         deleteId: '10',
         deleteSecondId: '',
         addPayload:
-          '{\n  "employeeID": 0,\n  "lastName": "Doe",\n  "firstName": "John",\n  "title": "Developer",\n  "titleOfCourtesy": "Mr.",\n  "birthDate": null,\n  "hireDate": null,\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "homePhone": "555-0123",\n  "extension": "123",\n  "photo": null,\n  "notes": null,\n  "reportsTo": null,\n  "photoPath": null\n}',
+          '{\n  "employeeId": 0,\n  "lastName": "Doe",\n  "firstName": "John",\n  "title": "Developer",\n  "titleOfCourtesy": "Mr.",\n  "birthDate": null,\n  "hireDate": null,\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "homePhone": "555-0123",\n  "extension": "123",\n  "photo": null,\n  "notes": null,\n  "reportsTo": null,\n  "photoPath": null\n}',
         updatePayload:
-          '{\n  "employeeID": 1,\n  "lastName": "Davolio",\n  "firstName": "Nancy",\n  "title": "Sales Representative",\n  "titleOfCourtesy": "Ms.",\n  "address": "507 - 20th Ave.",\n  "city": "Seattle",\n  "region": "WA",\n  "postalCode": "98122",\n  "country": "USA"\n}',
+          '{\n  "employeeId": 1,\n  "lastName": "Davolio",\n  "firstName": "Nancy",\n  "title": "Sales Representative",\n  "titleOfCourtesy": "Ms.",\n  "address": "507 - 20th Ave.",\n  "city": "Seattle",\n  "region": "WA",\n  "postalCode": "98122",\n  "country": "USA"\n}',
       },
       loadAll: () => this.apiExplorerService.loadEmployees(),
       getById: (id) => this.apiExplorerService.getEmployeeById(id),
@@ -116,9 +116,9 @@ export class ApiExplorerComponent {
         deleteId: '1',
         deleteSecondId: '10248',
         addPayload:
-          '{\n  "orderID": 10248,\n  "productID": 1,\n  "unitPrice": 18.0,\n  "quantity": 10,\n  "discount": 0\n}',
+          '{\n  "orderId": 10248,\n  "productId": 1,\n  "unitPrice": 18.0,\n  "quantity": 10,\n  "discount": 0\n}',
         updatePayload:
-          '{\n  "orderID": 10248,\n  "productID": 1,\n  "unitPrice": 18.0,\n  "quantity": 12,\n  "discount": 0.1\n}',
+          '{\n  "orderId": 10248,\n  "productId": 1,\n  "unitPrice": 18.0,\n  "quantity": 12,\n  "discount": 0.1\n}',
       },
       loadAll: () => this.apiExplorerService.loadOrderDetails(),
       getById: (id, id2) => this.apiExplorerService.getOrderDetailById(id, id2 || ''),
@@ -137,9 +137,9 @@ export class ApiExplorerComponent {
         deleteId: '11077',
         deleteSecondId: '',
         addPayload:
-          '{\n  "orderID": 0,\n  "customerID": "ALFKI",\n  "employeeID": 1,\n  "orderDate": "2026-01-01T00:00:00",\n  "requiredDate": null,\n  "shippedDate": null,\n  "shipVia": 1,\n  "freight": 10.5,\n  "shipName": "Acme",\n  "shipAddress": "123 Ship St",\n  "shipCity": "Seattle",\n  "shipRegion": null,\n  "shipPostalCode": "98101",\n  "shipCountry": "USA"\n}',
+          '{\n  "orderId": 0,\n  "customerId": "ALFKI",\n  "employeeId": 1,\n  "orderDate": "2026-01-01T00:00:00",\n  "requiredDate": null,\n  "shippedDate": null,\n  "shipVia": 1,\n  "freight": 10.5,\n  "shipName": "Acme",\n  "shipAddress": "123 Ship St",\n  "shipCity": "Seattle",\n  "shipRegion": null,\n  "shipPostalCode": "98101",\n  "shipCountry": "USA"\n}',
         updatePayload:
-          '{\n  "orderID": 10248,\n  "customerID": "ALFKI",\n  "employeeID": 1,\n  "shipCity": "Portland",\n  "shipCountry": "USA"\n}',
+          '{\n  "orderId": 10248,\n  "customerId": "ALFKI",\n  "employeeId": 1,\n  "shipCity": "Portland",\n  "shipCountry": "USA"\n}',
       },
       loadAll: () => this.apiExplorerService.loadOrders(),
       getById: (id) => this.apiExplorerService.getOrderById(id),
@@ -158,9 +158,9 @@ export class ApiExplorerComponent {
         deleteId: '78',
         deleteSecondId: '',
         addPayload:
-          '{\n  "productID": 0,\n  "productName": "New Product",\n  "supplierID": 1,\n  "categoryID": 1,\n  "quantityPerUnit": "10 boxes",\n  "unitPrice": 20.0,\n  "unitsInStock": 25,\n  "unitsOnOrder": 0,\n  "reorderLevel": 5,\n  "discontinued": false\n}',
+          '{\n  "productId": 0,\n  "productName": "New Product",\n  "supplierId": 1,\n  "categoryId": 1,\n  "quantityPerUnit": "10 boxes",\n  "unitPrice": 20.0,\n  "unitsInStock": 25,\n  "unitsOnOrder": 0,\n  "reorderLevel": 5,\n  "discontinued": false\n}',
         updatePayload:
-          '{\n  "productID": 1,\n  "productName": "Updated Product",\n  "unitPrice": 24.5,\n  "unitsInStock": 18,\n  "discontinued": false\n}',
+          '{\n  "productId": 1,\n  "productName": "Updated Product",\n  "unitPrice": 24.5,\n  "unitsInStock": 18,\n  "discontinued": false\n}',
       },
       loadAll: () => this.apiExplorerService.loadProducts(),
       getById: (id) => this.apiExplorerService.getProductById(id),
@@ -179,9 +179,9 @@ export class ApiExplorerComponent {
         deleteId: '4',
         deleteSecondId: '',
         addPayload:
-          '{\n  "shipperID": 0,\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
+          '{\n  "shipperId": 0,\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
         updatePayload:
-          '{\n  "shipperID": 1,\n  "companyName": "Speedy Express",\n  "phone": "555-3333"\n}',
+          '{\n  "shipperId": 1,\n  "companyName": "Speedy Express",\n  "phone": "555-3333"\n}',
       },
       loadAll: () => this.apiExplorerService.loadShippers(),
       getById: (id) => this.apiExplorerService.getShipperById(id),
@@ -200,9 +200,9 @@ export class ApiExplorerComponent {
         deleteId: '30',
         deleteSecondId: '',
         addPayload:
-          '{\n  "supplierID": 0,\n  "companyName": "Supplier One",\n  "contactName": "Ada",\n  "contactTitle": "Manager",\n  "address": "42 Supply Ave",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0110",\n  "fax": null,\n  "homePage": null\n}',
+          '{\n  "supplierId": 0,\n  "companyName": "Supplier One",\n  "contactName": "Ada",\n  "contactTitle": "Manager",\n  "address": "42 Supply Ave",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0110",\n  "fax": null,\n  "homePage": null\n}',
         updatePayload:
-          '{\n  "supplierID": 1,\n  "companyName": "Updated Supplier",\n  "contactName": "Exotic Liquids",\n  "phone": "555-0111"\n}',
+          '{\n  "supplierId": 1,\n  "companyName": "Updated Supplier",\n  "contactName": "Exotic Liquids",\n  "phone": "555-0111"\n}',
       },
       loadAll: () => this.apiExplorerService.loadSuppliers(),
       getById: (id) => this.apiExplorerService.getSupplierById(id),

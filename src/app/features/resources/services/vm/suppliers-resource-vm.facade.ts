@@ -33,7 +33,7 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
   protected createSampleDto(): SuppliersDto {
     return {
-      supplierID: 0,
+      supplierId: 0,
       companyName: 'Sample Supplier',
       contactName: 'Sample Contact',
       city: 'Seattle',
@@ -43,7 +43,7 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
   protected updateSampleDto(primaryId?: string): SuppliersDto {
     return {
-      supplierID: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      supplierId: this.asNumberishId(primaryId, this.defaultPrimaryId),
       companyName: 'Updated Supplier',
       contactName: 'Updated Contact',
       city: 'Portland',
@@ -65,8 +65,8 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
   protected mapDtoToRecord(dto: SuppliersDto): ResourceRecord {
     return {
-      primaryId: String(dto.supplierID),
-      title: dto.companyName?.trim() || `Supplier #${dto.supplierID}`,
+      primaryId: String(dto.supplierId),
+      title: dto.companyName?.trim() || `Supplier #${dto.supplierId}`,
       subtitle: [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
     };
@@ -77,7 +77,7 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
     return [
       this.createFieldsSection('Supplier profile', [
-        { label: 'Supplier ID', value: supplier.supplierID },
+        { label: 'Supplier ID', value: supplier.supplierId },
         { label: 'Company', value: supplier.companyName },
         { label: 'Contact', value: supplier.contactName },
         { label: 'Title', value: supplier.contactTitle },

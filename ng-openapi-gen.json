@@ -8,5 +8,7 @@
   "promises": false,
   "module": false,
   "apiService": "ApiClient",
-  "removeStaleFiles": true
+  "removeStaleFiles": true,
+  "ignoreUnusedModels": false,
+  "excludeParameters": ["X-Api-Version"]
 }

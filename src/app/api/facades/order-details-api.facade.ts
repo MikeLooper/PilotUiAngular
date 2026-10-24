@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, map, tap } from 'rxjs';
 import {
-  AddResponseInt,
+  AddResponseOrderDetails,
   OrderDetailsDto,
-  orderDetailsAddPost,
-  orderDetailsDeleteProductProductIdOrderOrderIdDelete,
-  orderDetailsGetAllGet,
-  orderDetailsGetProductProductIdOrderOrderIdGet,
-  orderDetailsUpdatePut,
+  v1OrderDetailsAddPost,
+  v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete,
+  v1OrderDetailsGetAllGet,
+  v1OrderDetailsGetProductProductIdOrderOrderIdGet,
+  v1OrderDetailsUpdatePut,
 } from '../generated';
 import { BaseResourceApiFacade } from './base-resource-api.facade';
 
@@ -18,27 +18,27 @@ export class OrderDetailsApiFacade extends BaseResourceApiFacade<OrderDetailsDto
   }
 
   public getById(productId: number | string, orderId: number | string): Observable<OrderDetailsDto> {
-    return this.apiClient.invoke(orderDetailsGetProductProductIdOrderOrderIdGet, {
+    return this.apiClient.invoke(v1OrderDetailsGetProductProductIdOrderOrderIdGet, {
       productId,
       orderId,
     });
   }
 
-  public add(orderDetail: OrderDetailsDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(orderDetailsAddPost, { body: orderDetail }).pipe(
+  public add(orderDetail: OrderDetailsDto): Observable<AddResponseOrderDetails> {
+    return this.apiClient.invoke(v1OrderDetailsAddPost, { body: orderDetail }).pipe(
       tap(() => this.clearCache())
     );
   }
 
   public update(orderDetail: OrderDetailsDto): Observable<void> {
-    return this.apiClient.invoke(orderDetailsUpdatePut, { body: orderDetail }).pipe(
+    return this.apiClient.invoke(v1OrderDetailsUpdatePut, { body: orderDetail }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   public delete(productId: number | string, orderId: number | string): Observable<void> {
-    return this.apiClient.invoke(orderDetailsDeleteProductProductIdOrderOrderIdDelete, {
+    return this.apiClient.invoke(v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete, {
       productId,
       orderId,
     }).pipe(
@@ -48,6 +48,6 @@ export class OrderDetailsApiFacade extends BaseResourceApiFacade<OrderDetailsDto
   }
 
   protected fetchAll(): Observable<readonly OrderDetailsDto[]> {
-    return this.apiClient.invoke(orderDetailsGetAllGet);
+    return this.apiClient.invoke(v1OrderDetailsGetAllGet);
   }
 }
