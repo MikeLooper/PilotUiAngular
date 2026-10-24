@@ -155,8 +155,8 @@ Update the current application to consume the new 'about' endpoint, in a similar
 - The available data sources are as follows:
   | Data Source | Base Port |
   |---|---|
-  | .NET Core application with SQL Server | 11401 |
-  | .NET Core application with PostgreSQL | 11501 |
+ | .NET Core application with SQL Server | 11001 |
+ | .NET Core application with PostgreSQL | 11101 |
   | Java Spring Boot application with SQL Server | 56601 |
   | Java Spring Boot application with PostgreSQL | 56701 |
 - The API URLs used by this application will follow this pattern for the base URL: "http://localhost:{base-port}/"
