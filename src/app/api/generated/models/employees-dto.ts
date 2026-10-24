@@ -6,7 +6,7 @@ export interface EmployeesDto {
   birthDate?: (string | null);
   city?: (string | null);
   country?: (string | null);
-  employeeID: (number | string);
+  employeeId?: (number | string | null);
   extension?: (string | null);
   firstName: (string | null);
   hireDate?: (string | null);

@@ -27,7 +27,7 @@ describe('OrderDetailsApiFacade', () => {
       httpMock,
       'http://localhost:53060/v1/order-details/get/product/1/order/10248'
     );
-    request.flush({ orderID: 10248, productID: 1, unitPrice: 18, quantity: 10, discount: 0 });
+    request.flush({ orderId: 10248, productId: 1, unitPrice: 18, quantity: 10, discount: 0 });
 
     expect(quantity).toBe(10);
   });

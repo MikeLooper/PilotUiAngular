@@ -3,11 +3,11 @@ import { Observable, map, tap } from 'rxjs';
 import {
   AddResponseInt,
   CategoriesDto,
-  categoriesAddPost,
-  categoriesDeleteCategoryIdDelete,
-  categoriesGetAllGet,
-  categoriesGetCategoryIdGet,
-  categoriesUpdatePut,
+  v1CategoriesAddPost,
+  v1CategoriesDeleteCategoryIdDelete,
+  v1CategoriesGetAllGet,
+  v1CategoriesGetCategoryIdGet,
+  v1CategoriesUpdatePut,
 } from '../generated';
 import { CategoryListItem } from '../../features/home/models/category-list-item';
 import { mapCategoryDtoToListItem } from '../mappers/category.mapper';
@@ -24,30 +24,30 @@ export class CategoriesApiFacade extends BaseResourceApiFacade<CategoriesDto> {
   }
 
   public getById(categoryId: number | string): Observable<CategoriesDto> {
-    return this.apiClient.invoke(categoriesGetCategoryIdGet, { categoryId });
+    return this.apiClient.invoke(v1CategoriesGetCategoryIdGet, { categoryId });
   }
 
   public add(category: CategoriesDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(categoriesAddPost, { body: category }).pipe(
+    return this.apiClient.invoke(v1CategoriesAddPost, { body: category }).pipe(
       tap(() => this.clearCache())
     );
   }
 
   public update(category: CategoriesDto): Observable<void> {
-    return this.apiClient.invoke(categoriesUpdatePut, { body: category }).pipe(
+    return this.apiClient.invoke(v1CategoriesUpdatePut, { body: category }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   public delete(categoryId: number | string): Observable<void> {
-    return this.apiClient.invoke(categoriesDeleteCategoryIdDelete, { categoryId }).pipe(
+    return this.apiClient.invoke(v1CategoriesDeleteCategoryIdDelete, { categoryId }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   protected fetchAll(): Observable<readonly CategoriesDto[]> {
-    return this.apiClient.invoke(categoriesGetAllGet);
+    return this.apiClient.invoke(v1CategoriesGetAllGet);
   }
 }

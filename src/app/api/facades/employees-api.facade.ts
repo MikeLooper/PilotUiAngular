@@ -3,11 +3,11 @@ import { Observable, map, tap } from 'rxjs';
 import {
   AddResponseInt,
   EmployeesDto,
-  employeesAddPost,
-  employeesDeleteEmployeeIdDelete,
-  employeesGetAllGet,
-  employeesGetEmployeeIdGet,
-  employeesUpdatePut,
+  v1EmployeesAddPost,
+  v1EmployeesDeleteEmployeeIdDelete,
+  v1EmployeesGetAllGet,
+  v1EmployeesGetEmployeeIdGet,
+  v1EmployeesUpdatePut,
 } from '../generated';
 import { BaseResourceApiFacade } from './base-resource-api.facade';
 
@@ -18,30 +18,30 @@ export class EmployeesApiFacade extends BaseResourceApiFacade<EmployeesDto> {
   }
 
   public getById(employeeId: number | string): Observable<EmployeesDto> {
-    return this.apiClient.invoke(employeesGetEmployeeIdGet, { employeeId });
+    return this.apiClient.invoke(v1EmployeesGetEmployeeIdGet, { employeeId });
   }
 
   public add(employee: EmployeesDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(employeesAddPost, { body: employee }).pipe(
+    return this.apiClient.invoke(v1EmployeesAddPost, { body: employee }).pipe(
       tap(() => this.clearCache())
     );
   }
 
   public update(employee: EmployeesDto): Observable<void> {
-    return this.apiClient.invoke(employeesUpdatePut, { body: employee }).pipe(
+    return this.apiClient.invoke(v1EmployeesUpdatePut, { body: employee }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   public delete(employeeId: number | string): Observable<void> {
-    return this.apiClient.invoke(employeesDeleteEmployeeIdDelete, { employeeId }).pipe(
+    return this.apiClient.invoke(v1EmployeesDeleteEmployeeIdDelete, { employeeId }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   protected fetchAll(): Observable<readonly EmployeesDto[]> {
-    return this.apiClient.invoke(employeesGetAllGet);
+    return this.apiClient.invoke(v1EmployeesGetAllGet);
   }
 }

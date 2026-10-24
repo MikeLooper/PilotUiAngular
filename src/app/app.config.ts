@@ -8,6 +8,7 @@ import { provideRouter } from '@angular/router';
 import { provideAppEnvironment } from './core/config/app-config';
 import { GlobalErrorHandler } from './core/errors/global-error-handler';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
+import { correlationIdInterceptor } from './core/interceptors/correlation-id-interceptor';
 import { errorHandlingInterceptor } from './core/interceptors/error-handling-interceptor';
 import { loadingInterceptor } from './core/interceptors/loading-interceptor';
 import { securityTokenInterceptor } from './core/interceptors/security-token-interceptor';
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([
         authInterceptor,
+        correlationIdInterceptor,
         securityTokenInterceptor,
         loadingInterceptor,
         errorHandlingInterceptor,

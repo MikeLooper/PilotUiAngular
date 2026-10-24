@@ -9,7 +9,7 @@ import { DataSourceTypes } from '../models/data-source-types';
 export interface DataSourceConfiguration {
 
   /**
-   * Gets or sets a flag that indicates whether this settigs object is active.
+   * Gets or sets a flag that indicates whether this settings object is active.
    */
   active?: boolean;
 
@@ -37,7 +37,7 @@ export interface DataSourceConfiguration {
   dataSourceType?: (string | null);
 
   /**
-   * Gets or sets the data source schema (e.g., "dbo").
+   * Gets or sets the data source schema (e.g., "dbo")
    * For best results, do not include delimiters ([,],") on this value.
    */
   schema?: (string | null);

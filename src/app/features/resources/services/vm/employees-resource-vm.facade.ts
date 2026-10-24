@@ -32,7 +32,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
   protected createSampleDto(): EmployeesDto {
     return {
-      employeeID: 0,
+      employeeId: 0,
       firstName: 'Sample',
       lastName: 'Employee',
       title: 'Representative',
@@ -43,7 +43,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
   protected updateSampleDto(primaryId?: string): EmployeesDto {
     return {
-      employeeID: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      employeeId: this.asNumberishId(primaryId, this.defaultPrimaryId),
       firstName: 'Updated',
       lastName: 'Employee',
       title: 'Senior Representative',
@@ -66,7 +66,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
   protected mapDtoToRecord(dto: EmployeesDto): ResourceRecord {
     return {
-      primaryId: String(dto.employeeID),
+      primaryId: String(dto.employeeId),
       title: `${dto.firstName ?? ''} ${dto.lastName ?? ''}`.trim() || 'Unnamed employee',
       subtitle: [dto.title, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
@@ -78,7 +78,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
     return [
       this.createFieldsSection('Employee profile', [
-        { label: 'Employee ID', value: employee.employeeID },
+        { label: 'Employee ID', value: employee.employeeId },
         { label: 'First name', value: employee.firstName },
         { label: 'Last name', value: employee.lastName },
         { label: 'Title', value: employee.title },

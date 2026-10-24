@@ -3,11 +3,11 @@ import { Observable, map, tap } from 'rxjs';
 import {
   AddResponseInt,
   SuppliersDto,
-  suppliersAddPost,
-  suppliersDeleteSupplierIdDelete,
-  suppliersGetAllGet,
-  suppliersGetSupplierIdGet,
-  suppliersUpdatePut,
+  v1SuppliersAddPost,
+  v1SuppliersDeleteSupplierIdDelete,
+  v1SuppliersGetAllGet,
+  v1SuppliersGetSupplierIdGet,
+  v1SuppliersUpdatePut,
 } from '../generated';
 import { BaseResourceApiFacade } from './base-resource-api.facade';
 
@@ -18,30 +18,30 @@ export class SuppliersApiFacade extends BaseResourceApiFacade<SuppliersDto> {
   }
 
   public getById(supplierId: number | string): Observable<SuppliersDto> {
-    return this.apiClient.invoke(suppliersGetSupplierIdGet, { supplierId });
+    return this.apiClient.invoke(v1SuppliersGetSupplierIdGet, { supplierId });
   }
 
   public add(supplier: SuppliersDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(suppliersAddPost, { body: supplier }).pipe(
+    return this.apiClient.invoke(v1SuppliersAddPost, { body: supplier }).pipe(
       tap(() => this.clearCache())
     );
   }
 
   public update(supplier: SuppliersDto): Observable<void> {
-    return this.apiClient.invoke(suppliersUpdatePut, { body: supplier }).pipe(
+    return this.apiClient.invoke(v1SuppliersUpdatePut, { body: supplier }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   public delete(supplierId: number | string): Observable<void> {
-    return this.apiClient.invoke(suppliersDeleteSupplierIdDelete, { supplierId }).pipe(
+    return this.apiClient.invoke(v1SuppliersDeleteSupplierIdDelete, { supplierId }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   protected fetchAll(): Observable<readonly SuppliersDto[]> {
-    return this.apiClient.invoke(suppliersGetAllGet);
+    return this.apiClient.invoke(v1SuppliersGetAllGet);
   }
 }

@@ -11,14 +11,12 @@ import { AboutResponse } from '../../models/about-response';
 
 export interface AboutGet$Params {
   'show-details'?: boolean;
-  ApiVersion?: string;
 }
 
 export function aboutGet(http: HttpClient, rootUrl: string, params?: AboutGet$Params, context?: HttpContext): Observable<StrictHttpResponse<AboutResponse>> {
   const rb = new RequestBuilder(rootUrl, aboutGet.PATH, 'get');
   if (params) {
     rb.query('show-details', params['show-details'], {});
-    rb.header('ApiVersion', params.ApiVersion, {});
   }
 
   return http.request(

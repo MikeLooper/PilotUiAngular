@@ -8,7 +8,7 @@
 export interface OpenApiContactConfiguration {
 
   /**
-   * Gets or sets a flag that indicates whether this settigs object is active.
+   * Gets or sets a flag that indicates whether this settings object is active.
    */
   active?: boolean;
 

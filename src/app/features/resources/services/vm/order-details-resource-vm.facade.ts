@@ -38,8 +38,8 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected createSampleDto(): OrderDetailsDto {
     return {
-      productID: 1,
-      orderID: 10248,
+      productId: 1,
+      orderId: 10248,
       unitPrice: 18,
       quantity: 10,
       discount: 0,
@@ -48,8 +48,8 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected updateSampleDto(primaryId?: string, secondaryId?: string): OrderDetailsDto {
     return {
-      productID: this.asNumberishId(primaryId, this.defaultPrimaryId),
-      orderID: this.asNumberishId(secondaryId, this.defaultSecondaryId || '10248'),
+      productId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      orderId: this.asNumberishId(secondaryId, this.defaultSecondaryId || '10248'),
       unitPrice: 18,
       quantity: 12,
       discount: 0.1,
@@ -73,9 +73,9 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected mapDtoToRecord(dto: OrderDetailsDto): ResourceRecord {
     return {
-      primaryId: String(dto.productID),
-      secondaryId: String(dto.orderID),
-      title: `Order ${dto.orderID} • Product ${dto.productID}`,
+      primaryId: String(dto.productId),
+      secondaryId: String(dto.orderId),
+      title: `Order ${dto.orderId} • Product ${dto.productId}`,
       subtitle: `Qty ${dto.quantity} • Unit ${dto.unitPrice} • Discount ${dto.discount}`,
       raw: dto,
     };
@@ -88,7 +88,7 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
       this.createTableSection(
         'Line item metrics',
         ['Order ID', 'Product ID', 'Unit price', 'Quantity', 'Discount'],
-        [[detail.orderID, detail.productID, detail.unitPrice, detail.quantity, detail.discount]]
+        [[detail.orderId, detail.productId, detail.unitPrice, detail.quantity, detail.discount]]
       ),
     ];
   }

@@ -1,11 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { switchMap } from 'rxjs';
-import { DOMAIN_API_VERSION_SEGMENT } from '../../api/facades/domain-api-client';
 import { APP_ENV } from '../config/app-config';
 import { SecurityTokenService } from '../services/security-token';
-
-const DOMAIN_URL_SEGMENT = `/${DOMAIN_API_VERSION_SEGMENT}/`;
+import { isDomainApiUrl } from './domain-request';
 
 /**
  * Applies a bearer token to domain endpoints only (About/Healthcheck stay
@@ -15,7 +13,7 @@ const DOMAIN_URL_SEGMENT = `/${DOMAIN_API_VERSION_SEGMENT}/`;
 export const securityTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const env = inject(APP_ENV);
 
-  if (!env.securityToken.active || !req.url.includes(DOMAIN_URL_SEGMENT)) {
+  if (!env.securityToken.active || !isDomainApiUrl(req.url)) {
     return next(req);
   }
 

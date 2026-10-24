@@ -1,29 +1,45 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpClient, HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { authInterceptor } from './auth-interceptor';
-import { APP_ENV } from '../config/app-config';
-import { environment } from '../../../environments/environment.development';
+
+const DOMAIN_URL = '/api/11201/v1/categories';
+const SYSTEM_URL = '/api/11201/about';
 
 describe('authInterceptor', () => {
   const interceptor: HttpInterceptorFn = (req, next) =>
     TestBed.runInInjectionContext(() => authInterceptor(req, next));
 
+  let httpMock: HttpTestingController;
+  let http: HttpClient;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        {
-          provide: APP_ENV,
-          useValue: {
-            ...environment,
-            apiBaseUrl: 'http://localhost:53060',
-          },
-        },
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
       ],
     });
+    httpMock = TestBed.inject(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {
     expect(interceptor).toBeTruthy();
   });
+
+  for (const url of [DOMAIN_URL, SYSTEM_URL]) {
+    it(`adds X-Requested-With (${url})`, () => {
+      http.get(url).subscribe();
+
+      const request = httpMock.expectOne(url);
+      expect(request.request.headers.get('X-Requested-With')).toBe('XMLHttpRequest');
+      request.flush({});
+    });
+  }
 });

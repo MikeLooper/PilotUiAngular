@@ -19,7 +19,7 @@ describe('ProductsApiFacade', () => {
   it('updates a product', () => {
     let completed = false;
 
-    facade.update({ productID: 1, productName: 'Updated Product' }).subscribe((result) => {
+    facade.update({ productId: 1, productName: 'Updated Product' }).subscribe((result) => {
       completed = result === undefined;
     });
 

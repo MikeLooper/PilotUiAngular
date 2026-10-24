@@ -1,13 +1,13 @@
 {
   "/idp": {
-    "target": "http://localhost:55001",
+    "target": "http://localhost:11141",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
       "^/idp": ""
     },
     "headers": {
-      "Origin": "http://localhost:55001"
+      "Origin": "http://localhost:11141"
     }
   },
   "/api/55099": {
@@ -18,52 +18,52 @@
       "^/api/55099": ""
     }
   },
-  "/api/55101": {
-    "target": "http://localhost:55101",
+  "/api/11001": {
+    "target": "http://localhost:11001",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55101": ""
+      "^/api/11001": ""
     }
   },
-  "/api/55201": {
-    "target": "http://localhost:55201",
+  "/api/11101": {
+    "target": "http://localhost:11101",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55201": ""
+      "^/api/11101": ""
     }
   },
-  "/api/55301": {
-    "target": "http://localhost:55301",
+  "/api/11201": {
+    "target": "http://localhost:11201",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55301": ""
+      "^/api/11201": ""
     }
   },
-  "/api/55401": {
-    "target": "http://localhost:55401",
+  "/api/11301": {
+    "target": "http://localhost:11301",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55401": ""
+      "^/api/11301": ""
     }
   },
-  "/api/55501": {
-    "target": "http://localhost:55501",
+  "/api/11401": {
+    "target": "http://localhost:11401",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55501": ""
+      "^/api/11401": ""
     }
   },
-  "/api/55601": {
-    "target": "http://localhost:55601",
+  "/api/11501": {
+    "target": "http://localhost:11501",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/55601": ""
+      "^/api/11501": ""
     }
   }
 }

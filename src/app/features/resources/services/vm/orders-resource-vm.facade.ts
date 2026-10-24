@@ -32,9 +32,9 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
   protected createSampleDto(): OrdersDto {
     return {
-      orderID: 0,
-      customerID: 'ALFKI',
-      employeeID: 1,
+      orderId: 0,
+      customerId: 'ALFKI',
+      employeeId: 1,
       shipCity: 'Seattle',
       shipCountry: 'USA',
     };
@@ -42,9 +42,9 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
   protected updateSampleDto(primaryId?: string): OrdersDto {
     return {
-      orderID: this.asNumberishId(primaryId, this.defaultPrimaryId),
-      customerID: 'ALFKI',
-      employeeID: 1,
+      orderId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      customerId: 'ALFKI',
+      employeeId: 1,
       shipCity: 'Portland',
       shipCountry: 'USA',
     };
@@ -64,9 +64,9 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
   protected mapDtoToRecord(dto: OrdersDto): ResourceRecord {
     return {
-      primaryId: String(dto.orderID),
-      title: `Order #${dto.orderID}`,
-      subtitle: [dto.customerID, dto.shipCity, dto.shipCountry].filter(Boolean).join(' • ') || 'No details',
+      primaryId: String(dto.orderId),
+      title: `Order #${dto.orderId}`,
+      subtitle: [dto.customerId, dto.shipCity, dto.shipCountry].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
     };
   }
@@ -76,9 +76,9 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
     return [
       this.createFieldsSection('Order summary', [
-        { label: 'Order ID', value: order.orderID },
-        { label: 'Customer ID', value: order.customerID },
-        { label: 'Employee ID', value: order.employeeID },
+        { label: 'Order ID', value: order.orderId },
+        { label: 'Customer ID', value: order.customerId },
+        { label: 'Employee ID', value: order.employeeId },
         { label: 'Freight', value: order.freight },
       ]),
       this.createFieldsSection('Shipping details', [

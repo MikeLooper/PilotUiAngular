@@ -33,7 +33,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
   protected createSampleDto(): ProductsDto {
     return {
-      productID: 0,
+      productId: 0,
       productName: 'Sample Product',
       unitPrice: 19.99,
       unitsInStock: 20,
@@ -45,7 +45,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
   protected updateSampleDto(primaryId?: string): ProductsDto {
     return {
-      productID: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      productId: this.asNumberishId(primaryId, this.defaultPrimaryId),
       productName: 'Updated Product',
       unitPrice: 21.49,
       unitsInStock: 18,
@@ -69,8 +69,8 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
   protected mapDtoToRecord(dto: ProductsDto): ResourceRecord {
     return {
-      primaryId: String(dto.productID),
-      title: dto.productName?.trim() || `Product #${dto.productID}`,
+      primaryId: String(dto.productId),
+      title: dto.productName?.trim() || `Product #${dto.productId}`,
       subtitle:
         [dto.quantityPerUnit, dto.unitPrice ? `$${dto.unitPrice}` : null]
           .filter(Boolean)
@@ -84,10 +84,10 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
     return [
       this.createFieldsSection('Product snapshot', [
-        { label: 'Product ID', value: product.productID },
+        { label: 'Product ID', value: product.productId },
         { label: 'Name', value: product.productName },
-        { label: 'Supplier ID', value: product.supplierID },
-        { label: 'Category ID', value: product.categoryID },
+        { label: 'Supplier ID', value: product.supplierId },
+        { label: 'Category ID', value: product.categoryId },
         { label: 'Quantity per unit', value: product.quantityPerUnit },
       ]),
       this.createTableSection(

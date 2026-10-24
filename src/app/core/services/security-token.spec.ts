@@ -9,7 +9,7 @@ import { APP_ENV, SecurityTokenConfig } from '../config/app-config';
 import { environment } from '../../../environments/environment.development';
 
 const SECRETS_URL = '/security-token-secrets.json';
-const TOKEN_URL = 'http://localhost:55001/realms/local-realm/protocol/openid-connect/token';
+const TOKEN_URL = 'http://localhost:11141/realms/local-realm/protocol/openid-connect/token';
 const secrets = { username: 'working_admin_user', password: 'super-secret' };
 
 function configure(securityToken: SecurityTokenConfig): void {
@@ -30,7 +30,7 @@ describe('SecurityTokenService', () => {
 
   const activeConfig: SecurityTokenConfig = {
     active: true,
-    baseUrl: 'http://localhost:55001',
+    baseUrl: 'http://localhost:11141',
     realm: 'local-realm',
     clientId: 'local-client',
   };

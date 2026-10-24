@@ -3,7 +3,7 @@ import { CategoryListItem } from '../../features/home/models/category-list-item'
 
 export function mapCategoryDtoToListItem(dto: CategoriesDto): CategoryListItem {
   return {
-    id: Number(dto.categoryID),
+    id: Number(dto.categoryId),
     name: dto.categoryName?.trim() || 'Untitled category',
     description: dto.description?.trim() || 'No description provided.',
   };

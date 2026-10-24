@@ -122,7 +122,6 @@ Typed environment values are defined through:
 Values include:
 
 - apiBaseUrl
-- apiVersion
 - requestTimeoutMs
 - production
 

@@ -33,7 +33,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
   protected createSampleDto(): CategoriesDto {
     return {
-      categoryID: 0,
+      categoryId: 0,
       categoryName: 'Sample category',
       description: 'Created from Categories resource page',
       picture: null,
@@ -42,7 +42,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
   protected updateSampleDto(primaryId?: string): CategoriesDto {
     return {
-      categoryID: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      categoryId: this.asNumberishId(primaryId, this.defaultPrimaryId),
       categoryName: 'Updated category',
       description: 'Updated from Categories resource page',
       picture: null,
@@ -63,7 +63,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
   protected mapDtoToRecord(dto: CategoriesDto): ResourceRecord {
     return {
-      primaryId: String(dto.categoryID),
+      primaryId: String(dto.categoryId),
       title: dto.categoryName?.trim() || 'Untitled category',
       subtitle: dto.description?.trim() || 'No description',
       raw: dto,
@@ -75,7 +75,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
     return [
       this.createFieldsSection('Category profile', [
-        { label: 'Category ID', value: category.categoryID },
+        { label: 'Category ID', value: category.categoryId },
         { label: 'Name', value: category.categoryName },
         { label: 'Description', value: category.description },
       ]),

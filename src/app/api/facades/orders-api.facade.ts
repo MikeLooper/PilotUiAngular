@@ -3,11 +3,11 @@ import { Observable, map, tap } from 'rxjs';
 import {
   AddResponseInt,
   OrdersDto,
-  ordersAddPost,
-  ordersDeleteOrderIdDelete,
-  ordersGetAllGet,
-  ordersGetOrderIdGet,
-  ordersUpdatePut,
+  v1OrdersAddPost,
+  v1OrdersDeleteOrderIdDelete,
+  v1OrdersGetAllGet,
+  v1OrdersGetOrderIdGet,
+  v1OrdersUpdatePut,
 } from '../generated';
 import { BaseResourceApiFacade } from './base-resource-api.facade';
 
@@ -18,30 +18,30 @@ export class OrdersApiFacade extends BaseResourceApiFacade<OrdersDto> {
   }
 
   public getById(orderId: number | string): Observable<OrdersDto> {
-    return this.apiClient.invoke(ordersGetOrderIdGet, { orderId });
+    return this.apiClient.invoke(v1OrdersGetOrderIdGet, { orderId });
   }
 
   public add(order: OrdersDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(ordersAddPost, { body: order }).pipe(
+    return this.apiClient.invoke(v1OrdersAddPost, { body: order }).pipe(
       tap(() => this.clearCache())
     );
   }
 
   public update(order: OrdersDto): Observable<void> {
-    return this.apiClient.invoke(ordersUpdatePut, { body: order }).pipe(
+    return this.apiClient.invoke(v1OrdersUpdatePut, { body: order }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   public delete(orderId: number | string): Observable<void> {
-    return this.apiClient.invoke(ordersDeleteOrderIdDelete, { orderId }).pipe(
+    return this.apiClient.invoke(v1OrdersDeleteOrderIdDelete, { orderId }).pipe(
       tap(() => this.clearCache()),
       map(() => undefined)
     );
   }
 
   protected fetchAll(): Observable<readonly OrdersDto[]> {
-    return this.apiClient.invoke(ordersGetAllGet);
+    return this.apiClient.invoke(v1OrdersGetAllGet);
   }
 }

@@ -37,7 +37,6 @@ export interface AppEnvironment {
   readonly production: boolean;
   readonly apiBaseUrl: string;
   readonly sourceApiConnections: SourceApiConnections;
-  readonly apiVersion: string;
   readonly requestTimeoutMs: number;
   readonly securityToken: SecurityTokenConfig;
 }

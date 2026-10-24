@@ -22,6 +22,6 @@ export function provideApiConfiguration(rootUrl: string) {
   providedIn: 'root',
 })
 export class ApiConfiguration {
-  rootUrl: string = 'http://localhost:53060/';
+  rootUrl: string = 'http://localhost:55099/';
 }
 
