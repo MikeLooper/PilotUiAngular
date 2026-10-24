@@ -215,4 +215,4 @@ IdpHostPassword will be read from the IDP_HOST_PASSWORD environment variable.
 20.
 Examine the source OpenAPI specification in `shared\PilotSharedSource\OpenAPI\PilotApi_v1.yaml`.
 Check the application to verify the API calls match the source OpenAPI specification, and correct the code to match the source OpenAPI specification as needed.
-The non-System API calls include a `X-Correlation-Id` header.  Verify these endpoiunt calls pass that header with a valid value.  If not being passed correctly, include the header with a new GUID value.
+The non-System API calls include a `X-Correlation-Id` header.  Verify these endpoint calls pass that header with a valid value.  If not being passed correctly, include the header with a new GUID value.
