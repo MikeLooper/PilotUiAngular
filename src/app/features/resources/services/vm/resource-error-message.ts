@@ -32,9 +32,8 @@ export function toResourceErrorMessage(error: unknown, operation?: ResourceOpera
     return describeApiError(error.apiError, operation);
   }
 
-  if (error && typeof error === 'object' && 'message' in error) {
-    return (error as { message?: string }).message || 'Request failed.';
-  }
+    const message = (error as { message?: unknown }).message;
+    return typeof message === 'string' && message ? message : 'Request failed.';
 
   return 'Request failed.';
 }
