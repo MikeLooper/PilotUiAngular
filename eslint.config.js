@@ -11,6 +11,17 @@ module.exports = [
   },
   js.configs.recommended,
   {
+    files: ['.vscode/run-current-test.js'],
+    languageOptions: {
+      globals: {
+        __dirname: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        require: 'readonly',
+      },
+    },
+  },
+  {
     files: ['**/*.ts'],
     languageOptions: {
       parser: tsParser,
