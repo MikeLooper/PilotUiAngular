@@ -34,8 +34,12 @@
     {
       "label": "test: current file",
       "detail": "Run the spec for the active editor file (a spec, or the production file beside it).",
-      "type": "shell",
-      "command": "npx ng test --watch=false --include \"${relativeFile}\"",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/.vscode/run-current-test.js",
+        "${relativeFile}"
+      ],
       "group": "test",
       "problemMatcher": "$tsc",
       "presentation": {
@@ -66,8 +70,13 @@
     {
       "label": "test: debug current file (wait for debugger)",
       "detail": "Used by the 'Debug unit tests: current file' launch configuration.",
-      "type": "shell",
-      "command": "npx ng test --watch=false --debug --include \"${relativeFile}\"",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/.vscode/run-current-test.js",
+        "${relativeFile}",
+        "--debug"
+      ],
       "isBackground": true,
       "problemMatcher": {
         "owner": "ng-test-debug",
