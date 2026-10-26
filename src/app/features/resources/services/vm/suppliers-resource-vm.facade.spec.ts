@@ -109,42 +109,41 @@ describe('SuppliersResourceVmFacade', () => {
     });
   });
 
-  describe('createSample', () => {
-    it('adds a sample supplier without a server-generated id', () => {
-      facade.createSample();
+  describe('createSamplePayload', () => {
+    it('builds a sample supplier without a server-generated id', () => {
+      const dto = facade.createSamplePayload();
 
-      const dto = vi.mocked(api.add).mock.lastCall?.[0];
       expect(dto).toMatchObject({ companyName: 'Sample Supplier', contactName: 'Sample Contact' });
       expect(dto).not.toHaveProperty('supplierId');
     });
 
-    it('sends an add payload that satisfies the OpenAPI length limits', () => {
-      facade.createSample();
+    it('builds an add payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.createSamplePayload();
 
-      expectWithinMaxLengths(vi.mocked(api.add).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the supplier with the given id', () => {
-      facade.updateSample('2');
+  describe('updateSamplePayload', () => {
+    it('targets the supplier with the given id', () => {
+      const payload = facade.updateSamplePayload('2');
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({
+      expect(payload).toMatchObject({
         supplierId: 2,
         companyName: 'Updated Supplier',
       });
     });
 
-    it('updates the default supplier when no id is given', () => {
-      facade.updateSample();
+    it('targets the default supplier when no id is given', () => {
+      const payload = facade.updateSamplePayload();
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({ supplierId: 1 });
+      expect(payload).toMatchObject({ supplierId: 1 });
     });
 
-    it('sends an update payload that satisfies the OpenAPI length limits', () => {
-      facade.updateSample('2');
+    it('builds an update payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.updateSamplePayload('2');
 
-      expectWithinMaxLengths(vi.mocked(api.update).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 

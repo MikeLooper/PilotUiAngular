@@ -105,42 +105,41 @@ describe('ProductsResourceVmFacade', () => {
     });
   });
 
-  describe('createSample', () => {
-    it('adds a sample product without a server-generated id', () => {
-      facade.createSample();
+  describe('createSamplePayload', () => {
+    it('builds a sample product without a server-generated id', () => {
+      const dto = facade.createSamplePayload();
 
-      const dto = vi.mocked(api.add).mock.lastCall?.[0];
       expect(dto).toMatchObject({ productName: 'Sample Product', discontinued: false });
       expect(dto).not.toHaveProperty('productId');
     });
 
-    it('sends an add payload that satisfies the OpenAPI length limits', () => {
-      facade.createSample();
+    it('builds an add payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.createSamplePayload();
 
-      expectWithinMaxLengths(vi.mocked(api.add).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the product with the given id', () => {
-      facade.updateSample('3');
+  describe('updateSamplePayload', () => {
+    it('targets the product with the given id', () => {
+      const payload = facade.updateSamplePayload('3');
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({
+      expect(payload).toMatchObject({
         productId: 3,
         productName: 'Updated Product',
       });
     });
 
-    it('updates the default product when no id is given', () => {
-      facade.updateSample();
+    it('targets the default product when no id is given', () => {
+      const payload = facade.updateSamplePayload();
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({ productId: 1 });
+      expect(payload).toMatchObject({ productId: 1 });
     });
 
-    it('sends an update payload that satisfies the OpenAPI length limits', () => {
-      facade.updateSample('3');
+    it('builds an update payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.updateSamplePayload('3');
 
-      expectWithinMaxLengths(vi.mocked(api.update).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 

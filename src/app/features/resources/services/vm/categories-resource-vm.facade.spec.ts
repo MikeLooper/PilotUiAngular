@@ -108,11 +108,10 @@ describe('CategoriesResourceVmFacade', () => {
     });
   });
 
-  describe('createSample', () => {
-    it('adds a sample category without a server-generated id', () => {
-      facade.createSample();
+  describe('createSamplePayload', () => {
+    it('builds a sample category without a server-generated id', () => {
+      const dto = facade.createSamplePayload();
 
-      const dto = vi.mocked(api.add).mock.lastCall?.[0];
       expect(dto).toEqual({
         categoryName: 'Sample category',
         description: 'Created from Categories resource page',
@@ -121,33 +120,33 @@ describe('CategoriesResourceVmFacade', () => {
       expect(dto).not.toHaveProperty('categoryId');
     });
 
-    it('sends an add payload that satisfies the OpenAPI length limits', () => {
-      facade.createSample();
+    it('builds an add payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.createSamplePayload();
 
-      expectWithinMaxLengths(vi.mocked(api.add).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the category with the given id', () => {
-      facade.updateSample('4');
+  describe('updateSamplePayload', () => {
+    it('targets the category with the given id', () => {
+      const payload = facade.updateSamplePayload('4');
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({
+      expect(payload).toMatchObject({
         categoryId: 4,
         categoryName: 'Updated name',
       });
     });
 
-    it('updates the default category when no id is given', () => {
-      facade.updateSample();
+    it('targets the default category when no id is given', () => {
+      const payload = facade.updateSamplePayload();
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({ categoryId: 1 });
+      expect(payload).toMatchObject({ categoryId: 1 });
     });
 
-    it('sends an update payload that satisfies the OpenAPI length limits', () => {
-      facade.updateSample('4');
+    it('builds an update payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.updateSamplePayload('4');
 
-      expectWithinMaxLengths(vi.mocked(api.update).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 

@@ -167,8 +167,7 @@ describe('BaseResourceCrudVmFacade', () => {
         sortDirection: 'asc',
         isLoading: false,
         errorMessage: null,
-        selectedItem: null,
-        mutationResult: null,
+        lastOperation: null,
       });
     });
 
@@ -256,7 +255,6 @@ describe('BaseResourceCrudVmFacade', () => {
         },
       });
       custom.fetchById('1');
-      custom.createSample();
       custom.goToPage(3);
 
       custom.onPageEnter();
@@ -266,8 +264,7 @@ describe('BaseResourceCrudVmFacade', () => {
         sortDirection: 'desc',
         pageSize: 2,
         page: 1,
-        selectedItem: null,
-        mutationResult: null,
+        lastOperation: null,
         errorMessage: null,
       });
     });
@@ -406,11 +403,19 @@ describe('BaseResourceCrudVmFacade', () => {
   });
 
   describe('fetchById', () => {
-    it('stores the fetched DTO as the selected item', () => {
+    it('records the fetched DTO as the get result, keyed by the id labels', () => {
       facade.fetchById('2', '100');
 
       expect(facade.api.getById).toHaveBeenCalledExactlyOnceWith(2, '100');
-      expect(facade.vm()).toMatchObject({ selectedItem: GADGETS[0], isLoading: false });
+      expect(facade.vm()).toMatchObject({
+        isLoading: false,
+        lastOperation: {
+          operation: 'get',
+          request: { 'Gadget ID': '2', 'Batch ID': '100' },
+          response: GADGETS[0],
+          errorMessage: null,
+        },
+      });
     });
 
     it.each([
@@ -424,88 +429,232 @@ describe('BaseResourceCrudVmFacade', () => {
       expect(facade.api.getById).toHaveBeenCalledExactlyOnceWith(expected, undefined);
     });
 
-    it('shows the error message when the request fails', () => {
+    it('records the default ids in the request when the ids are blank', () => {
+      facade.fetchById(' ');
+
+      expect(facade.vm().lastOperation?.request).toEqual({ 'Gadget ID': '1', 'Batch ID': '100' });
+    });
+
+    it('records a null response when the API returns no content', () => {
+      facade.api.getById.mockReturnValue(of(null as unknown as Gadget));
+
+      facade.fetchById('99');
+
+      expect(facade.vm().lastOperation).toMatchObject({ response: null, errorMessage: null });
+    });
+
+    it('clears the previous result and shows loading while the request is pending', () => {
+      const pending = new Subject<Gadget>();
+      facade.fetchById('2');
+      facade.api.getById.mockReturnValue(pending);
+
+      facade.fetchById('3');
+
+      expect(facade.vm()).toMatchObject({ isLoading: true, lastOperation: null });
+    });
+
+    it('records the error message on the result instead of the list error', () => {
       facade.api.getById.mockReturnValue(throwError(() => new Error('Not found')));
 
       facade.fetchById('2');
 
-      expect(facade.vm()).toMatchObject({ isLoading: false, errorMessage: 'Not found' });
+      expect(facade.vm()).toMatchObject({
+        isLoading: false,
+        errorMessage: null,
+        lastOperation: { operation: 'get', response: null, errorMessage: 'Not found' },
+      });
+    });
+
+    it('translates an API error status into a user-friendly message', () => {
+      const error = new ApiClientError({ kind: 'http', status: 404, message: 'Not Found' });
+      facade.api.getById.mockReturnValue(throwError(() => error));
+
+      facade.fetchById('2');
+
+      expect(facade.vm().lastOperation?.errorMessage).toBe(
+        'No record was found with that ID. Check the ID and try again.',
+      );
+    });
+
+    it('does not reload the list', () => {
+      facade.fetchById('2');
+
+      expect(facade.api.loadAll).not.toHaveBeenCalled();
     });
   });
 
   describe('deleteById', () => {
-    it('records a delete result and reloads the list', () => {
+    it('records the delete result and reloads the list', () => {
       facade.deleteById('2', '100');
 
       expect(facade.api.delete).toHaveBeenCalledExactlyOnceWith(2, '100');
-      expect(facade.vm().mutationResult).toEqual({ success: true, operation: 'delete' });
+      expect(facade.vm().lastOperation).toEqual({
+        operation: 'delete',
+        request: { 'Gadget ID': '2', 'Batch ID': '100' },
+        response: null,
+        errorMessage: null,
+      });
       expect(facade.api.loadAll).toHaveBeenCalledExactlyOnceWith(true);
     });
 
-    it('shows the error message and does not reload when the request fails', () => {
+    it('records the error message and does not reload when the request fails', () => {
       facade.api.delete.mockReturnValue(throwError(() => new Error('Conflict')));
 
       facade.deleteById('2');
 
-      expect(facade.vm().errorMessage).toBe('Conflict');
+      expect(facade.vm().lastOperation?.errorMessage).toBe('Conflict');
       expect(facade.api.loadAll).not.toHaveBeenCalled();
     });
   });
 
-  describe('createSample', () => {
-    it('adds the sample DTO, records the response, and reloads the list', () => {
-      facade.createSample();
+  describe('create', () => {
+    it('adds the given payload, records the response, and reloads the list', () => {
+      const payload = { name: 'Typed gadget' };
 
-      expect(facade.api.add).toHaveBeenCalledExactlyOnceWith({ name: 'Sample gadget' });
-      expect(facade.vm().mutationResult).toEqual({ id: 9 });
+      facade.create(payload);
+
+      expect(facade.api.add).toHaveBeenCalledExactlyOnceWith(payload);
+      expect(facade.vm().lastOperation).toEqual({
+        operation: 'create',
+        request: payload,
+        response: { id: 9 },
+        errorMessage: null,
+      });
       expect(facade.api.loadAll).toHaveBeenCalledExactlyOnceWith(true);
     });
 
-    it('shows the error message and does not reload when the request fails', () => {
+    it('records the error message and does not reload when the request fails', () => {
       facade.api.add.mockReturnValue(throwError(() => new Error('Invalid')));
 
-      facade.createSample();
+      facade.create({ name: 'Typed gadget' });
 
-      expect(facade.vm().errorMessage).toBe('Invalid');
+      expect(facade.vm().lastOperation?.errorMessage).toBe('Invalid');
       expect(facade.api.loadAll).not.toHaveBeenCalled();
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the sample DTO for the given id and reloads the list', () => {
-      facade.updateSample('3');
+  describe('update', () => {
+    it('updates with the given payload and reloads the list', () => {
+      const payload = { id: 3, name: 'Edited gadget' };
 
-      expect(facade.api.update).toHaveBeenCalledExactlyOnceWith({ id: 3, name: 'Updated gadget' });
+      facade.update(payload);
+
+      expect(facade.api.update).toHaveBeenCalledExactlyOnceWith(payload);
       expect(facade.api.loadAll).toHaveBeenCalledExactlyOnceWith(true);
     });
 
-    it('uses the default id when no id is given', () => {
-      facade.updateSample();
+    it('records a null response when the API returns no content', () => {
+      facade.update({ id: 3, name: 'Edited gadget' });
 
-      expect(facade.api.update).toHaveBeenCalledExactlyOnceWith({ id: 1, name: 'Updated gadget' });
-    });
-
-    it('records a generic update result when the response is empty', () => {
-      facade.updateSample('3');
-
-      expect(facade.vm().mutationResult).toEqual({ success: true, operation: 'update' });
+      expect(facade.vm().lastOperation).toMatchObject({ operation: 'update', response: null });
     });
 
     it('records the response when the API returns one', () => {
       facade.api.update.mockReturnValue(of({ success: false }));
 
-      facade.updateSample('3');
+      facade.update({ id: 3, name: 'Edited gadget' });
 
-      expect(facade.vm().mutationResult).toEqual({ success: false });
+      expect(facade.vm().lastOperation?.response).toEqual({ success: false });
     });
 
-    it('shows the error message and does not reload when the request fails', () => {
+    it('records the error message and does not reload when the request fails', () => {
       facade.api.update.mockReturnValue(throwError(() => new Error('Gone')));
 
-      facade.updateSample('3');
+      facade.update({ id: 3, name: 'Edited gadget' });
 
-      expect(facade.vm().errorMessage).toBe('Gone');
+      expect(facade.vm().lastOperation?.errorMessage).toBe('Gone');
       expect(facade.api.loadAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('createSamplePayload', () => {
+    it('returns the sample DTO without sending it', () => {
+      const payload = facade.createSamplePayload();
+
+      expect(payload).toEqual({ name: 'Sample gadget' });
+      expect(facade.api.add).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateSamplePayload', () => {
+    it('returns the sample DTO for the given id without sending it', () => {
+      const payload = facade.updateSamplePayload('3');
+
+      expect(payload).toEqual({ id: 3, name: 'Updated gadget' });
+      expect(facade.api.update).not.toHaveBeenCalled();
+    });
+
+    it('uses the default id when no id is given', () => {
+      const payload = facade.updateSamplePayload();
+
+      expect(payload).toEqual({ id: 1, name: 'Updated gadget' });
+    });
+  });
+
+  describe('mapOperationResultSections', () => {
+    it('maps a get response with the selected item sections', () => {
+      const sections = facade.mapOperationResultSections({
+        operation: 'get',
+        request: {},
+        response: { name: 'Bravo' },
+        errorMessage: null,
+      });
+
+      expect(sections).toEqual([
+        { title: 'Selected record', kind: 'fields', fields: [{ label: 'name', value: 'Bravo' }] },
+      ]);
+    });
+
+    it('maps nothing for a get without a record', () => {
+      const sections = facade.mapOperationResultSections({
+        operation: 'get',
+        request: {},
+        response: null,
+        errorMessage: null,
+      });
+
+      expect(sections).toEqual([]);
+    });
+
+    it('maps nothing for a failed request', () => {
+      const sections = facade.mapOperationResultSections({
+        operation: 'create',
+        request: {},
+        response: null,
+        errorMessage: 'Invalid',
+      });
+
+      expect(sections).toEqual([]);
+    });
+
+    it('maps a mutation response with the mutation result sections', () => {
+      const sections = facade.mapOperationResultSections({
+        operation: 'create',
+        request: {},
+        response: { id: 9 },
+        errorMessage: null,
+      });
+
+      expect(sections).toEqual([
+        { title: 'Last mutation result', kind: 'fields', fields: [{ label: 'id', value: '9' }] },
+      ]);
+    });
+
+    it('maps an empty mutation response as a successful operation', () => {
+      const statusFacade = new StatusReportingVmFacade();
+
+      const [section] = statusFacade.mapOperationResultSections({
+        operation: 'delete',
+        request: {},
+        response: null,
+        errorMessage: null,
+      });
+
+      expect(section?.fields).toEqual([
+        { label: 'Action', value: 'Delete' },
+        { label: 'Status', value: 'Success' },
+        { label: 'Gadget ID', value: '-' },
+      ]);
     });
   });
 

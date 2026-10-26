@@ -153,6 +153,16 @@ const SECTIONS: readonly SectionCase[] = [
   },
 ];
 
+const LIST_RESULT = [{ id: 1 }];
+const ITEM_RESULT = { id: 2 };
+const MUTATION_RESULT = { success: true };
+const ALL_RESULTS_STATE: ResourcePanelState = {
+  ...initialResourcePanelState,
+  listResult: LIST_RESULT,
+  itemResult: ITEM_RESULT,
+  mutationResult: MUTATION_RESULT,
+};
+
 describe('ApiExplorerComponent', () => {
   let fixture: ComponentFixture<ApiExplorerComponent>;
   let states: Record<StateKey, WritableSignal<ResourcePanelState>>;
@@ -184,6 +194,16 @@ describe('ApiExplorerComponent', () => {
     return Array.from(container.querySelectorAll('label'))
       .filter((candidate) => candidate.textContent?.trim() === label)
       .map((candidate) => candidate.querySelector('input') as HTMLInputElement);
+  }
+
+  function resultText(key: string): (string | null)[] {
+    return Array.from(panel(key).querySelectorAll('pre')).map((pre) => pre.textContent);
+  }
+
+  async function selectDomain(title: string): Promise<void> {
+    button(page(), title).click();
+    await fixture.whenStable();
+    Object.values(methods).forEach((method) => method.mockClear());
   }
 
   async function typeInto(input: HTMLInputElement, value: string): Promise<void> {
@@ -265,15 +285,61 @@ describe('ApiExplorerComponent', () => {
   });
 
   describe('showNavigation', () => {
-    it('lists a quick link for every resource by default', () => {
-      const links = Array.from(
-        page().querySelectorAll<HTMLAnchorElement>('nav[aria-label="API resource quick links"] a'),
+    function quickLinks(): HTMLButtonElement[] {
+      return Array.from(
+        page().querySelectorAll<HTMLButtonElement>(
+          'nav[aria-label="API resource quick links"] button',
+        ),
       );
+    }
 
-      expect(links.map((link) => [link.textContent, link.getAttribute('href')])).toEqual(
-        SECTIONS.map((section) => [section.title, `#${section.key}`]),
-      );
+    it('lists a quick link for every resource by default', () => {
+      const labels = quickLinks().map((link) => link.textContent?.trim());
+
+      expect(labels).toEqual(SECTIONS.map((section) => section.title));
     });
+
+    it('renders the quick links as in-page buttons rather than navigating links', () => {
+      const links = quickLinks();
+
+      expect(links.every((link) => link.type === 'button')).toBe(true);
+      expect(page().querySelectorAll('nav a')).toHaveLength(0);
+    });
+
+    it('marks the first quick link as pressed by default', () => {
+      const pressed = quickLinks().map((link) => link.getAttribute('aria-pressed'));
+
+      expect(pressed).toEqual(SECTIONS.map((_, index) => String(index === 0)));
+    });
+
+    it('shows only the first resource panel and loads its records by default', () => {
+      const titles = Array.from(page().querySelectorAll('article h3')).map((h) => h.textContent);
+
+      expect(titles).toEqual([SECTIONS[0]!.title]);
+      expect(methods[SECTIONS[0]!.load]).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    it('does not load any other records by default', () => {
+      const otherLoads = SECTIONS.slice(1).map((section) => methods[section.load]);
+
+      expect(otherLoads.every((load) => load!.mock.calls.length === 0)).toBe(true);
+    });
+
+    it.each(SECTIONS)(
+      'shows only the $title panel and loads its records when its quick link is clicked',
+      async (section) => {
+        const link = button(page(), section.title);
+        methods[section.load]!.mockClear();
+
+        link.click();
+        await fixture.whenStable();
+
+        const titles = Array.from(page().querySelectorAll('article h3')).map((h) => h.textContent);
+        expect(titles).toEqual([section.title]);
+        expect(methods[section.load]).toHaveBeenCalledExactlyOnceWith();
+        expect(button(page(), section.title).getAttribute('aria-pressed')).toBe('true');
+      },
+    );
 
     it('hides the quick links when false', async () => {
       fixture.componentRef.setInput('showNavigation', false);
@@ -285,10 +351,21 @@ describe('ApiExplorerComponent', () => {
   });
 
   describe('resourceKey', () => {
-    it('shows every resource panel when no key is set', () => {
-      const titles = Array.from(page().querySelectorAll('article h3')).map((h) => h.textContent);
+    it('shows only the selected resource panel when no key is set', async () => {
+      await selectDomain('Orders');
 
-      expect(titles).toEqual(SECTIONS.map((section) => section.title));
+      const titles = Array.from(page().querySelectorAll('article h3')).map((h) => h.textContent);
+      expect(titles).toEqual(['Orders']);
+    });
+
+    it('does not load the first resource when a key is set before initialization', async () => {
+      const keyedFixture = TestBed.createComponent(ApiExplorerComponent);
+      methods['loadCategories']!.mockClear();
+      keyedFixture.componentRef.setInput('resourceKey', 'orders');
+
+      await keyedFixture.whenStable();
+
+      expect(methods['loadCategories']).not.toHaveBeenCalled();
     });
 
     it('shows every resource panel for the system key', async () => {
@@ -320,6 +397,10 @@ describe('ApiExplorerComponent', () => {
 
   describe('resource panels', () => {
     describe.each(SECTIONS)('$title', (section) => {
+      beforeEach(async () => {
+        await selectDomain(section.title);
+      });
+
       it(`loads all records with ${section.load}`, () => {
         button(panel(section.key), 'Load All').click();
 
@@ -354,25 +435,59 @@ describe('ApiExplorerComponent', () => {
         expect(methods[section.remove]).toHaveBeenCalledExactlyOnceWith(...section.removeArgs);
       });
 
-      it('renders the list, item, and mutation results as JSON', async () => {
-        states[section.stateKey].set({
-          ...initialResourcePanelState,
-          listResult: [{ id: 1 }],
-          itemResult: { id: 2 },
-          mutationResult: { success: true },
-        });
+      it('renders a single Result area showing the list result by default', async () => {
+        states[section.stateKey].set(ALL_RESULTS_STATE);
 
         await fixture.whenStable();
 
-        const results = Array.from(panel(section.key).querySelectorAll('pre')).map(
-          (pre) => pre.textContent,
+        const headings = Array.from(panel(section.key).querySelectorAll('h4')).map(
+          (heading) => heading.textContent,
         );
-        expect(results).toEqual([
-          JSON.stringify([{ id: 1 }], null, 2),
-          JSON.stringify({ id: 2 }, null, 2),
-          JSON.stringify({ success: true }, null, 2),
-        ]);
+        expect(headings).toEqual(['Result']);
+        expect(resultText(section.key)).toEqual([JSON.stringify(LIST_RESULT, null, 2)]);
       });
+
+      it.each([
+        { label: 'Load All', expected: LIST_RESULT },
+        { label: 'Get By ID', expected: ITEM_RESULT },
+        { label: 'Add', expected: MUTATION_RESULT },
+        { label: 'Update', expected: MUTATION_RESULT },
+        { label: 'Delete', expected: MUTATION_RESULT },
+      ])('shows the $label response in the Result area', async ({ label, expected }) => {
+        states[section.stateKey].set(ALL_RESULTS_STATE);
+
+        button(panel(section.key), label).click();
+        await fixture.whenStable();
+
+        expect(resultText(section.key)).toEqual([JSON.stringify(expected, null, 2)]);
+      });
+
+      it('hides the result while a request is in flight', async () => {
+        states[section.stateKey].set({ ...ALL_RESULTS_STATE, loading: true });
+
+        await fixture.whenStable();
+
+        expect(resultText(section.key)).toEqual([]);
+      });
+
+      it('hides the result when the request fails', async () => {
+        states[section.stateKey].set({ ...ALL_RESULTS_STATE, error: 'Request failed' });
+
+        await fixture.whenStable();
+
+        expect(resultText(section.key)).toEqual([]);
+      });
+    });
+
+    it('switches the Result area back to the list result after Load All', async () => {
+      states.categories.set(ALL_RESULTS_STATE);
+      button(panel('categories'), 'Get By ID').click();
+      await fixture.whenStable();
+
+      button(panel('categories'), 'Load All').click();
+      await fixture.whenStable();
+
+      expect(resultText('categories')).toEqual([JSON.stringify(LIST_RESULT, null, 2)]);
     });
 
     it('sends the edited id when fetching by id', async () => {
@@ -385,6 +500,7 @@ describe('ApiExplorerComponent', () => {
     });
 
     it('sends the edited ids when deleting by id', async () => {
+      await selectDomain('Order Details');
       const deleteProductInput = fieldsLabelled(panel('order-details'), 'Product ID')[1];
       const deleteOrderInput = fieldsLabelled(panel('order-details'), 'Order ID')[1];
       await typeInto(deleteProductInput!, '7');
@@ -396,6 +512,7 @@ describe('ApiExplorerComponent', () => {
     });
 
     it('sends the edited payload when adding', async () => {
+      await selectDomain('Shippers');
       const textarea = panel('shippers').querySelector('textarea') as HTMLTextAreaElement;
       textarea.value = '{"companyName":"Edited"}';
       textarea.dispatchEvent(new Event('input'));
@@ -406,24 +523,42 @@ describe('ApiExplorerComponent', () => {
       expect(methods['addShipper']).toHaveBeenCalledExactlyOnceWith('{"companyName":"Edited"}');
     });
 
-    it('shows second id fields only for order details', () => {
+    it('shows second id fields for order details', async () => {
+      await selectDomain('Order Details');
+
       const orderIdFields = fieldsLabelled(panel('order-details'), 'Order ID');
-      const ordersPanelFields = panel('orders').querySelectorAll('label input');
 
       expect(orderIdFields).toHaveLength(2);
+    });
+
+    it('shows no second id fields for orders', async () => {
+      await selectDomain('Orders');
+
+      const ordersPanelFields = panel('orders').querySelectorAll('label input');
+
       expect(ordersPanelFields).toHaveLength(2);
     });
 
     it('shows a progress message while a request is in flight', async () => {
+      await selectDomain('Products');
       states.products.set({ ...initialResourcePanelState, loading: true });
 
       await fixture.whenStable();
 
       expect(panel('products').textContent).toContain('Request in progress...');
+    });
+
+    it('shows no progress message for a panel without a request in flight', async () => {
+      await selectDomain('Orders');
+      states.products.set({ ...initialResourcePanelState, loading: true });
+
+      await fixture.whenStable();
+
       expect(panel('orders').textContent).not.toContain('Request in progress...');
     });
 
     it('shows the panel error', async () => {
+      await selectDomain('Suppliers');
       states.suppliers.set({
         ...initialResourcePanelState,
         error: 'Invalid Suppliers payload JSON.',

@@ -1,6 +1,5 @@
 import { computed, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiClientError } from '../../../../core/errors/api-error.model';
 import {
   ResourceDetailSection,
   ResourcePageDefaults,
@@ -8,8 +7,11 @@ import {
   ResourceCrudState,
   ResourceCrudVmFacade,
   ResourceCrudViewModel,
+  ResourceOperation,
+  ResourceOperationResult,
   ResourceRecord,
 } from './resource-vm.models';
+import { toResourceErrorMessage } from './resource-error-message';
 
 interface CrudFacadeMetadata {
   readonly heading: string;
@@ -27,15 +29,14 @@ const initialState: ResourceCrudState = {
   page: 1,
   pageSize: 8,
   sortDirection: 'asc',
-  selectedItem: null,
-  mutationResult: null,
+  lastOperation: null,
   isLoading: false,
   errorMessage: null,
 };
 
-export abstract class BaseResourceCrudVmFacade<TDto>
-  implements ResourceCrudVmFacade
-{
+export abstract class BaseResourceCrudVmFacade<
+  TDto extends object,
+> implements ResourceCrudVmFacade {
   public abstract readonly key: ResourceCrudVmFacade['key'];
 
   public readonly heading: string;
@@ -123,8 +124,7 @@ export abstract class BaseResourceCrudVmFacade<TDto>
       sortDirection,
       pageSize,
       page: 1,
-      selectedItem: null,
-      mutationResult: null,
+      lastOperation: null,
       errorMessage: null,
     }));
 
@@ -146,10 +146,34 @@ export abstract class BaseResourceCrudVmFacade<TDto>
     return this.toFieldSection('Last mutation result', value);
   }
 
+  public mapOperationResultSections(
+    result: ResourceOperationResult,
+  ): readonly ResourceDetailSection[] {
+    if (result.errorMessage) {
+      return [];
+    }
+
+    if (result.operation === 'get') {
+      return result.response === null ? [] : this.mapSelectedItemSections(result.response);
+    }
+
+    return this.mapMutationResultSections(
+      result.response ?? { success: true, operation: result.operation },
+    );
+  }
+
+  public createSamplePayload(): object {
+    return this.createSampleDto();
+  }
+
+  public updateSamplePayload(primaryId?: string, secondaryId?: string): object {
+    return this.updateSampleDto(primaryId, secondaryId);
+  }
+
   protected mapMutationResultForResource(
     resourceLabel: string,
     idLabel: string,
-    value: unknown
+    value: unknown,
   ): readonly ResourceDetailSection[] {
     const payload = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
     const operationValue = payload['operation'];
@@ -185,7 +209,7 @@ export abstract class BaseResourceCrudVmFacade<TDto>
         }));
       },
       error: (error: unknown) => {
-        this.setError(this.resolveErrorMessage(error));
+        this.setError(toResourceErrorMessage(error));
       },
     });
   }
@@ -214,74 +238,27 @@ export abstract class BaseResourceCrudVmFacade<TDto>
   }
 
   public fetchById(primaryId: string, secondaryId?: string): void {
-    this.setLoading();
-    this.getByIdDto(primaryId, secondaryId).subscribe({
-      next: (item) => {
-        this.state.update((current) => ({
-          ...current,
-          selectedItem: item,
-          isLoading: false,
-          errorMessage: null,
-        }));
-      },
-      error: (error: unknown) => {
-        this.setError(this.resolveErrorMessage(error));
-      },
-    });
+    this.runOperation(
+      'get',
+      this.toIdRequest(primaryId, secondaryId),
+      this.getByIdDto(primaryId, secondaryId),
+    );
   }
 
   public deleteById(primaryId: string, secondaryId?: string): void {
-    this.setLoading();
-    this.deleteDto(primaryId, secondaryId).subscribe({
-      next: () => {
-        this.state.update((current) => ({
-          ...current,
-          mutationResult: { success: true, operation: 'delete' },
-          isLoading: false,
-          errorMessage: null,
-        }));
-        this.reload(true);
-      },
-      error: (error: unknown) => {
-        this.setError(this.resolveErrorMessage(error));
-      },
-    });
+    this.runOperation(
+      'delete',
+      this.toIdRequest(primaryId, secondaryId),
+      this.deleteDto(primaryId, secondaryId),
+    );
   }
 
-  public createSample(): void {
-    this.setLoading();
-    this.addDto(this.createSampleDto()).subscribe({
-      next: (result) => {
-        this.state.update((current) => ({
-          ...current,
-          mutationResult: result,
-          isLoading: false,
-          errorMessage: null,
-        }));
-        this.reload(true);
-      },
-      error: (error: unknown) => {
-        this.setError(this.resolveErrorMessage(error));
-      },
-    });
+  public create(payload: object): void {
+    this.runOperation('create', payload, this.addDto(payload as TDto));
   }
 
-  public updateSample(primaryId?: string, secondaryId?: string): void {
-    this.setLoading();
-    this.updateDto(this.updateSampleDto(primaryId, secondaryId)).subscribe({
-      next: (result) => {
-        this.state.update((current) => ({
-          ...current,
-          mutationResult: result ?? { success: true, operation: 'update' },
-          isLoading: false,
-          errorMessage: null,
-        }));
-        this.reload(true);
-      },
-      error: (error: unknown) => {
-        this.setError(this.resolveErrorMessage(error));
-      },
-    });
+  public update(payload: object): void {
+    this.runOperation('update', payload, this.updateDto(payload as TDto));
   }
 
   protected asNumberishId(value: string | undefined, fallback: string): number | string {
@@ -292,7 +269,7 @@ export abstract class BaseResourceCrudVmFacade<TDto>
 
   protected createFieldsSection(
     title: string,
-    fields: ReadonlyArray<{ readonly label: string; readonly value: unknown }>
+    fields: ReadonlyArray<{ readonly label: string; readonly value: unknown }>,
   ): ResourceDetailSection {
     return {
       title,
@@ -307,7 +284,7 @@ export abstract class BaseResourceCrudVmFacade<TDto>
   protected createTableSection(
     title: string,
     columns: readonly string[],
-    rows: ReadonlyArray<ReadonlyArray<unknown>>
+    rows: ReadonlyArray<ReadonlyArray<unknown>>,
   ): ResourceDetailSection {
     return {
       title,
@@ -349,7 +326,7 @@ export abstract class BaseResourceCrudVmFacade<TDto>
         Object.entries(value as Record<string, unknown>).map(([label, fieldValue]) => ({
           label,
           value: fieldValue,
-        }))
+        })),
       ),
     ];
   }
@@ -371,6 +348,62 @@ export abstract class BaseResourceCrudVmFacade<TDto>
     return `${value[0]?.toUpperCase() ?? ''}${value.slice(1).toLowerCase()}`;
   }
 
+  /**
+   * Records the outcome of a single-record request in `lastOperation` (failures included, so
+   * they show beside the request rather than as a list error) and reloads the list after a
+   * successful mutation.
+   */
+  private runOperation(
+    operation: ResourceOperation,
+    request: unknown,
+    request$: Observable<unknown>,
+  ): void {
+    this.state.update((current) => ({
+      ...current,
+      lastOperation: null,
+      isLoading: true,
+      errorMessage: null,
+    }));
+    request$.subscribe({
+      next: (response) => {
+        this.state.update((current) => ({
+          ...current,
+          lastOperation: { operation, request, response: response ?? null, errorMessage: null },
+          isLoading: false,
+        }));
+
+        if (operation !== 'get') {
+          this.reload(true);
+        }
+      },
+      error: (error: unknown) => {
+        this.state.update((current) => ({
+          ...current,
+          lastOperation: {
+            operation,
+            request,
+            response: null,
+            errorMessage: toResourceErrorMessage(error, operation),
+          },
+          isLoading: false,
+        }));
+      },
+    });
+  }
+
+  /** Mirrors the fallback the resource facades apply when an id field is left blank. */
+  private toIdRequest(primaryId: string, secondaryId?: string): Record<string, string> {
+    const request: Record<string, string> = {
+      [this.primaryIdLabel]: primaryId.trim() || this.defaultPrimaryId,
+    };
+
+    if (this.secondaryIdLabel) {
+      request[this.secondaryIdLabel] = secondaryId?.trim() || this.defaultSecondaryId || '';
+    }
+
+    return request;
+  }
+
   private setLoading(): void {
     this.state.update((current) => ({
       ...current,
@@ -385,17 +418,5 @@ export abstract class BaseResourceCrudVmFacade<TDto>
       isLoading: false,
       errorMessage: message,
     }));
-  }
-
-  private resolveErrorMessage(error: unknown): string {
-    if (error instanceof ApiClientError) {
-      return error.apiError.message;
-    }
-
-    if (error && typeof error === 'object' && 'message' in error) {
-      return (error as { message?: string }).message ?? 'Request failed.';
-    }
-
-    return 'Request failed.';
   }
 }

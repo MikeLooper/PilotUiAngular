@@ -118,11 +118,11 @@ describe('OrderDetailsResourceVmFacade', () => {
     });
   });
 
-  describe('createSample', () => {
-    it('adds the sample order detail', () => {
-      facade.createSample();
+  describe('createSamplePayload', () => {
+    it('builds the sample order detail', () => {
+      const payload = facade.createSamplePayload() as OrderDetailsDto;
 
-      expect(vi.mocked(api.add).mock.lastCall?.[0]).toEqual({
+      expect(payload).toEqual({
         productId: 1,
         orderId: 10248,
         unitPrice: 18,
@@ -132,17 +132,17 @@ describe('OrderDetailsResourceVmFacade', () => {
     });
 
     it('keeps quantity and discount within the OpenAPI ranges in the add payload', () => {
-      facade.createSample();
+      const payload = facade.createSamplePayload() as OrderDetailsDto;
 
-      expectWithinOpenApiRanges(vi.mocked(api.add).mock.lastCall![0]);
+      expectWithinOpenApiRanges(payload);
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the order detail with the given ids', () => {
-      facade.updateSample('11', '10249');
+  describe('updateSamplePayload', () => {
+    it('targets the order detail with the given ids', () => {
+      const payload = facade.updateSamplePayload('11', '10249') as OrderDetailsDto;
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toEqual({
+      expect(payload).toEqual({
         productId: 11,
         orderId: 10249,
         unitPrice: 18,
@@ -151,19 +151,19 @@ describe('OrderDetailsResourceVmFacade', () => {
       });
     });
 
-    it('updates the default order detail when no ids are given', () => {
-      facade.updateSample();
+    it('targets the default order detail when no ids are given', () => {
+      const payload = facade.updateSamplePayload();
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({
+      expect(payload).toMatchObject({
         productId: 1,
         orderId: 10248,
       });
     });
 
     it('keeps quantity and discount within the OpenAPI ranges in the update payload', () => {
-      facade.updateSample('11', '10249');
+      const payload = facade.updateSamplePayload('11', '10249') as OrderDetailsDto;
 
-      expectWithinOpenApiRanges(vi.mocked(api.update).mock.lastCall![0]);
+      expectWithinOpenApiRanges(payload);
     });
   });
 

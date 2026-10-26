@@ -112,11 +112,11 @@ describe('CustomersResourceVmFacade', () => {
     });
   });
 
-  describe('createSample', () => {
-    it('adds the sample customer', () => {
-      facade.createSample();
+  describe('createSamplePayload', () => {
+    it('builds the sample customer', () => {
+      const payload = facade.createSamplePayload();
 
-      expect(vi.mocked(api.add).mock.lastCall?.[0]).toEqual({
+      expect(payload).toEqual({
         customerId: 'NEW01',
         companyName: 'Sample Customer Co',
         contactName: 'Sample Contact',
@@ -125,33 +125,33 @@ describe('CustomersResourceVmFacade', () => {
       });
     });
 
-    it('sends an add payload that satisfies the OpenAPI length limits', () => {
-      facade.createSample();
+    it('builds an add payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.createSamplePayload();
 
-      expectWithinMaxLengths(vi.mocked(api.add).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 
-  describe('updateSample', () => {
-    it('updates the customer with the given id', () => {
-      facade.updateSample('BONAP');
+  describe('updateSamplePayload', () => {
+    it('targets the customer with the given id', () => {
+      const payload = facade.updateSamplePayload('BONAP');
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({
+      expect(payload).toMatchObject({
         customerId: 'BONAP',
         companyName: 'Updated Customer Co',
       });
     });
 
-    it('updates the default customer when no id is given', () => {
-      facade.updateSample('');
+    it('targets the default customer when no id is given', () => {
+      const payload = facade.updateSamplePayload('');
 
-      expect(vi.mocked(api.update).mock.lastCall?.[0]).toMatchObject({ customerId: 'ALFKI' });
+      expect(payload).toMatchObject({ customerId: 'ALFKI' });
     });
 
-    it('sends an update payload that satisfies the OpenAPI length limits', () => {
-      facade.updateSample('BONAP');
+    it('builds an update payload that satisfies the OpenAPI length limits', () => {
+      const payload = facade.updateSamplePayload('BONAP');
 
-      expectWithinMaxLengths(vi.mocked(api.update).mock.lastCall![0], MAX_LENGTHS);
+      expectWithinMaxLengths(payload, MAX_LENGTHS);
     });
   });
 

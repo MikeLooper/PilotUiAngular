@@ -8,6 +8,7 @@ import {
   ResourceCrudViewModel,
   ResourceCrudVmFacade,
   ResourceDetailSection,
+  ResourceOperationResult,
   SystemVmFacade,
   SystemVmState,
 } from '../../services/vm/resource-vm.models';
@@ -39,8 +40,7 @@ const IDLE_VM: ResourceCrudViewModel = {
   totalItems: 0,
   totalPages: 1,
   sortDirection: 'asc',
-  selectedItem: null,
-  mutationResult: null,
+  lastOperation: null,
   isLoading: false,
   errorMessage: null,
   hasEmptyState: false,
@@ -58,6 +58,12 @@ const DETAIL_SECTIONS: readonly ResourceDetailSection[] = [
   { title: 'Metrics', kind: 'table', table: { columns: ['Qty', 'Price'], rows: [['12', '18']] } },
 ];
 
+const CREATE_SAMPLE = { name: 'Sample' };
+
+function getResult(response: unknown): ResourceOperationResult {
+  return { operation: 'get', request: { 'Order ID': '1' }, response, errorMessage: null };
+}
+
 function createCrudFacadeDouble(
   overrides: Partial<Omit<ResourceCrudVmFacade, 'vm'>> = {},
 ): CrudFacadeDouble {
@@ -74,14 +80,17 @@ function createCrudFacadeDouble(
     onPageEnter: vi.fn(() => ({ primaryId: '11', secondaryId: '10249' })),
     mapSelectedItemSections: vi.fn(() => DETAIL_SECTIONS),
     mapMutationResultSections: vi.fn(() => DETAIL_SECTIONS),
+    mapOperationResultSections: vi.fn(() => DETAIL_SECTIONS),
+    createSamplePayload: vi.fn(() => CREATE_SAMPLE),
+    updateSamplePayload: vi.fn((primaryId?: string) => ({ id: primaryId ?? '1', name: 'Updated' })),
     reload: vi.fn(),
     setSearchTerm: vi.fn(),
     toggleSortDirection: vi.fn(),
     goToPage: vi.fn(),
     fetchById: vi.fn(),
     deleteById: vi.fn(),
-    createSample: vi.fn(),
-    updateSample: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
     ...overrides,
   };
 }
@@ -113,7 +122,33 @@ describe('ResourcePageComponent', () => {
     return match?.querySelector('input') ?? null;
   }
 
-  async function type(input: HTMLInputElement, value: string): Promise<void> {
+  function editor(): HTMLTextAreaElement | null {
+    return page().querySelector('textarea');
+  }
+
+  function operationOptions(): HTMLInputElement[] {
+    return Array.from(page().querySelectorAll<HTMLInputElement>('fieldset input[type="radio"]'));
+  }
+
+  function selectedOperation(): string | undefined {
+    return operationOptions()
+      .find((option) => option.checked)
+      ?.closest('label')
+      ?.textContent?.trim();
+  }
+
+  async function chooseOperation(label: string): Promise<void> {
+    const option = operationOptions().find(
+      (candidate) => candidate.closest('label')?.textContent?.trim() === label,
+    );
+    if (!option) {
+      throw new Error(`No operation labelled "${label}"`);
+    }
+    option.click();
+    await harness.fixture.whenStable();
+  }
+
+  async function type(input: HTMLInputElement | HTMLTextAreaElement, value: string): Promise<void> {
     input.value = value;
     input.dispatchEvent(new Event('input'));
     await harness.fixture.whenStable();
@@ -220,6 +255,7 @@ describe('ResourcePageComponent', () => {
     describe('page entry', () => {
       it('notifies the facade once and fills the id fields from its entry state', async () => {
         await open('/resources/order-details');
+        await chooseOperation('Get');
 
         expect(crudFacade.onPageEnter).toHaveBeenCalledTimes(1);
         expect(field('Product ID')?.value).toBe('11');
@@ -230,6 +266,7 @@ describe('ResourcePageComponent', () => {
         vi.mocked(crudFacade.onPageEnter).mockReturnValue({ primaryId: '3' });
 
         await open('/resources/order-details');
+        await chooseOperation('Get');
 
         expect(field('Order ID')?.value).toBe('');
       });
@@ -238,6 +275,7 @@ describe('ResourcePageComponent', () => {
         crudFacade = createCrudFacadeDouble({ secondaryIdLabel: undefined });
 
         await open('/resources/orders');
+        await chooseOperation('Get');
 
         expect(field('Product ID')).not.toBeNull();
         expect(field('Order ID')).toBeNull();
@@ -265,12 +303,14 @@ describe('ResourcePageComponent', () => {
     });
 
     describe('onReload', () => {
-      it('force-reloads when Refresh is clicked', async () => {
+      it('does not render a Refresh button', async () => {
         await open('/resources/orders');
 
-        button('Refresh').click();
+        const labels = Array.from(page().querySelectorAll('button')).map((candidate) =>
+          candidate.textContent?.trim(),
+        );
 
-        expect(crudFacade.reload).toHaveBeenCalledExactlyOnceWith(true);
+        expect(labels).not.toContain('Refresh');
       });
 
       it('force-reloads when Try Again is clicked in the error alert', async () => {
@@ -286,6 +326,7 @@ describe('ResourcePageComponent', () => {
     describe('onFetchById', () => {
       it('fetches using the entry ids', async () => {
         await open('/resources/order-details');
+        await chooseOperation('Get');
 
         button('Get By Id').click();
 
@@ -294,6 +335,7 @@ describe('ResourcePageComponent', () => {
 
       it('fetches using ids typed by the user', async () => {
         await open('/resources/order-details');
+        await chooseOperation('Get');
         await type(field('Product ID')!, '42');
         await type(field('Order ID')!, '10300');
 
@@ -303,51 +345,330 @@ describe('ResourcePageComponent', () => {
       });
     });
 
+    describe('onOperationChanged', () => {
+      it('offers Load All as the first operation, followed by the record operations', async () => {
+        await open('/resources/orders');
+
+        const labels = operationOptions().map((option) =>
+          option.closest('label')?.textContent?.trim(),
+        );
+
+        expect(labels).toEqual(['Load All', 'Get', 'Create', 'Update', 'Delete']);
+      });
+
+      it('starts on Load All without id fields or a request body', async () => {
+        await open('/resources/order-details');
+
+        expect(selectedOperation()).toBe('Load All');
+        expect(field('Product ID')).toBeNull();
+        expect(editor()).toBeNull();
+      });
+
+      it('shows the id fields and the Get By Id action for Get', async () => {
+        await open('/resources/order-details');
+
+        await chooseOperation('Get');
+
+        expect(selectedOperation()).toBe('Get');
+        expect(field('Product ID')).not.toBeNull();
+        expect(button('Get By Id')).toBeInstanceOf(HTMLButtonElement);
+      });
+
+      it('force-reloads the list when Load All is chosen again', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Get');
+
+        await chooseOperation('Load All');
+
+        expect(selectedOperation()).toBe('Load All');
+        expect(crudFacade.reload).toHaveBeenCalledExactlyOnceWith(true);
+      });
+
+      it('does not reload when a record operation is chosen', async () => {
+        await open('/resources/orders');
+
+        await chooseOperation('Get');
+        await chooseOperation('Create');
+        await chooseOperation('Update');
+        await chooseOperation('Delete');
+
+        expect(crudFacade.reload).not.toHaveBeenCalled();
+      });
+
+      it('returns to Load All when another resource page is opened', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Delete');
+
+        await harness.navigateByUrl('/resources/categories', ResourcePageComponent);
+        await harness.fixture.whenStable();
+
+        expect(selectedOperation()).toBe('Load All');
+      });
+
+      it('shows the request body editor without id fields for Create', async () => {
+        await open('/resources/order-details');
+
+        await chooseOperation('Create');
+
+        expect(selectedOperation()).toBe('Create');
+        expect(field('Product ID')).toBeNull();
+        expect(editor()).not.toBeNull();
+      });
+
+      it('shows the id fields and the request body editor for Update', async () => {
+        await open('/resources/order-details');
+
+        await chooseOperation('Update');
+
+        expect(field('Product ID')).not.toBeNull();
+        expect(editor()).not.toBeNull();
+      });
+
+      it('clears a request body error when another operation is chosen', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Create');
+        await type(editor()!, '{');
+        button('Create').click();
+        await harness.fixture.whenStable();
+
+        await chooseOperation('Update');
+
+        expect(page().querySelector('[role="alert"]')).toBeNull();
+      });
+    });
+
+    describe('onOperationClicked', () => {
+      it('force-reloads the list when the selected Load All is clicked', async () => {
+        await open('/resources/orders');
+
+        await chooseOperation('Load All');
+
+        expect(crudFacade.reload).toHaveBeenCalledExactlyOnceWith(true);
+      });
+
+      it('does not reload when the selected Load All is clicked while loading', async () => {
+        await open('/resources/orders');
+        await setVm({ isLoading: true });
+
+        await chooseOperation('Load All');
+
+        expect(crudFacade.reload).not.toHaveBeenCalled();
+      });
+    });
+
     describe('onDeleteById', () => {
       it('deletes using the current ids', async () => {
         await open('/resources/order-details');
+        await chooseOperation('Delete');
 
         button('Delete').click();
 
         expect(crudFacade.deleteById).toHaveBeenCalledExactlyOnceWith('11', '10249');
       });
-    });
 
-    describe('onCreateSample', () => {
-      it('creates a sample record', async () => {
-        await open('/resources/orders');
+      it('deletes using ids typed by the user', async () => {
+        await open('/resources/order-details');
+        await chooseOperation('Delete');
+        await type(field('Product ID')!, '42');
 
-        button('Create Sample').click();
+        button('Delete').click();
 
-        expect(crudFacade.createSample).toHaveBeenCalledTimes(1);
+        expect(crudFacade.deleteById).toHaveBeenCalledExactlyOnceWith('42', '10249');
       });
     });
 
-    describe('onUpdateSample', () => {
-      it('updates the sample record for the current ids', async () => {
+    describe('createPayloadText', () => {
+      it('prefills the request body with the facade create sample', async () => {
+        await open('/resources/orders');
+
+        await chooseOperation('Create');
+
+        expect(editor()?.value).toBe(JSON.stringify(CREATE_SAMPLE, null, 2));
+      });
+    });
+
+    describe('onCreate', () => {
+      it('creates the record from the edited request body', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Create');
+        await type(editor()!, '{ "name": "Typed" }');
+
+        button('Create').click();
+
+        expect(crudFacade.create).toHaveBeenCalledExactlyOnceWith({ name: 'Typed' });
+      });
+
+      it.each([
+        { label: 'not valid JSON', body: '{ "name": ', message: 'not valid JSON' },
+        { label: 'a JSON array', body: '[1, 2]', message: 'must be a JSON object' },
+        { label: 'JSON null', body: 'null', message: 'must be a JSON object' },
+      ])(
+        'shows an error and does not create when the body is $label',
+        async ({ body, message }) => {
+          await open('/resources/orders');
+          await chooseOperation('Create');
+          await type(editor()!, body);
+
+          button('Create').click();
+          await harness.fixture.whenStable();
+
+          expect(page().querySelector('[role="alert"]')?.textContent).toContain(message);
+          expect(crudFacade.create).not.toHaveBeenCalled();
+        },
+      );
+    });
+
+    describe('onCreatePayloadChanged', () => {
+      it('clears the request body error when the body is edited', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Create');
+        await type(editor()!, '{');
+        button('Create').click();
+        await harness.fixture.whenStable();
+
+        await type(editor()!, '{}');
+
+        expect(page().querySelector('[role="alert"]')).toBeNull();
+      });
+    });
+
+    describe('onLoadCreateSample', () => {
+      it('restores the create sample when Load Sample is clicked', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Create');
+        await type(editor()!, '{}');
+
+        button('Load Sample').click();
+        await harness.fixture.whenStable();
+
+        expect(editor()?.value).toBe(JSON.stringify(CREATE_SAMPLE, null, 2));
+      });
+    });
+
+    describe('updatePayloadText', () => {
+      it('prefills the request body with the facade update sample', async () => {
+        await open('/resources/orders');
+
+        await chooseOperation('Update');
+
+        expect(crudFacade.updateSamplePayload).toHaveBeenCalledWith();
+        expect(editor()?.value).toBe(JSON.stringify({ id: '1', name: 'Updated' }, null, 2));
+      });
+
+      it('fills the request body with the record fetched by Get By Id', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+
+        await setVm({ lastOperation: getResult({ orderId: 7, shipName: 'Vins' }) });
+
+        expect(editor()?.value).toBe(JSON.stringify({ orderId: 7, shipName: 'Vins' }, null, 2));
+      });
+
+      it('keeps the edited body when the last result is cleared', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+        await setVm({ lastOperation: getResult({ orderId: 7 }) });
+        await type(editor()!, '{ "orderId": 8 }');
+
+        await setVm({ lastOperation: null, isLoading: true });
+
+        expect(editor()?.value).toBe('{ "orderId": 8 }');
+      });
+    });
+
+    describe('onUpdate', () => {
+      it('updates the record from the edited request body', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+        await type(editor()!, '{ "orderId": 8 }');
+
+        button('Update').click();
+
+        expect(crudFacade.update).toHaveBeenCalledExactlyOnceWith({ orderId: 8 });
+      });
+
+      it('shows an error and does not update when the body is not valid JSON', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+        await type(editor()!, 'orderId: 8');
+
+        button('Update').click();
+        await harness.fixture.whenStable();
+
+        expect(page().querySelector('[role="alert"]')?.textContent).toContain('not valid JSON');
+        expect(crudFacade.update).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('onUpdatePayloadChanged', () => {
+      it('clears the request body error when the body is edited', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+        await type(editor()!, '{');
+        button('Update').click();
+        await harness.fixture.whenStable();
+
+        await type(editor()!, '{}');
+
+        expect(page().querySelector('[role="alert"]')).toBeNull();
+      });
+    });
+
+    describe('onLoadUpdateSample', () => {
+      it('loads the update sample for the current ids when Load Sample is clicked', async () => {
         await open('/resources/order-details');
+        await chooseOperation('Update');
 
-        button('Update Sample').click();
+        button('Load Sample').click();
+        await harness.fixture.whenStable();
 
-        expect(crudFacade.updateSample).toHaveBeenCalledExactlyOnceWith('11', '10249');
+        expect(crudFacade.updateSamplePayload).toHaveBeenLastCalledWith('11', '10249');
+        expect(editor()?.value).toBe(JSON.stringify({ id: '11', name: 'Updated' }, null, 2));
+      });
+    });
+
+    describe('Load Record', () => {
+      it('fetches the record for the current ids', async () => {
+        await open('/resources/order-details');
+        await chooseOperation('Update');
+
+        button('Load Record').click();
+
+        expect(crudFacade.fetchById).toHaveBeenCalledExactlyOnceWith('11', '10249');
       });
     });
 
     describe('loading and error states', () => {
-      it('shows a loading message and disables the actions while loading', async () => {
+      it('shows a loading message while the list loads', async () => {
         await open('/resources/orders');
 
         await setVm({ isLoading: true });
 
         expect(page().textContent).toContain('Loading data...');
-        for (const label of [
-          'Toggle Sort',
-          'Refresh',
-          'Get By Id',
-          'Delete',
-          'Create Sample',
-          'Update Sample',
-        ]) {
+      });
+
+      it('shows a sending message while a record operation runs', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Get');
+
+        await setVm({ isLoading: true });
+
+        expect(page().textContent).toContain('Sending request...');
+        expect(page().textContent).not.toContain('Loading data...');
+      });
+
+      it.each([
+        { operation: 'Get', labels: ['Toggle Sort', 'Get By Id'] },
+        { operation: 'Create', labels: ['Load Sample', 'Create'] },
+        { operation: 'Update', labels: ['Load Record', 'Load Sample', 'Update'] },
+        { operation: 'Delete', labels: ['Delete'] },
+      ])('disables the $operation actions while loading', async ({ operation, labels }) => {
+        await open('/resources/orders');
+        await chooseOperation(operation);
+
+        await setVm({ isLoading: true });
+
+        for (const label of labels) {
           expect(button(label).disabled, label).toBe(true);
         }
       });
@@ -369,6 +690,19 @@ describe('ResourcePageComponent', () => {
 
         expect(page().textContent).toContain('No records matched your current filters.');
       });
+
+      it.each(['Get', 'Create', 'Update', 'Delete'])(
+        'hides the list error and empty state under %s',
+        async (operation) => {
+          await open('/resources/orders');
+          await chooseOperation(operation);
+
+          await setVm({ errorMessage: 'API unreachable', hasEmptyState: true });
+
+          expect(page().textContent).not.toContain('API unreachable');
+          expect(page().textContent).not.toContain('No records matched');
+        },
+      );
     });
 
     describe('record list and pagination', () => {
@@ -406,6 +740,19 @@ describe('ResourcePageComponent', () => {
 
         expect(page().textContent).toContain('Page 2 of 3 · 18 total records');
       });
+
+      it.each(['Get', 'Create', 'Update', 'Delete'])(
+        'hides the list and pagination under %s',
+        async (operation) => {
+          await open('/resources/orders');
+          await chooseOperation(operation);
+
+          await setVm({ items: RECORDS, pagedItems: RECORDS, totalItems: 2 });
+
+          expect(page().querySelector('ul')).toBeNull();
+          expect(page().textContent).not.toContain('total records');
+        },
+      );
 
       it('does not render the list or pagination when there are no records', async () => {
         await open('/resources/orders');
@@ -445,16 +792,30 @@ describe('ResourcePageComponent', () => {
       });
     });
 
-    describe('selectedSections', () => {
-      it('renders the sections the facade maps for the selected item', async () => {
+    describe('operation result', () => {
+      function resultPanel(): HTMLElement | null {
+        return page().querySelector('section[aria-labelledby="operation-result-heading"]');
+      }
+
+      it('renders no result panel before an operation completes', async () => {
         await open('/resources/orders');
+        await chooseOperation('Get');
 
-        await setVm({ selectedItem: { productId: 1 } });
+        expect(resultPanel()).toBeNull();
+        expect(crudFacade.mapOperationResultSections).not.toHaveBeenCalled();
+      });
 
-        const panel = Array.from(page().querySelectorAll('section')).find(
-          (section) => section.querySelector('h3')?.textContent === 'Selected record',
-        );
-        expect(crudFacade.mapSelectedItemSections).toHaveBeenCalledWith({ productId: 1 });
+      it('shows the operation, status, and the sections the facade maps for the result', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Get');
+        const result = getResult({ productId: 1 });
+
+        await setVm({ lastOperation: result });
+
+        const panel = resultPanel();
+        expect(crudFacade.mapOperationResultSections).toHaveBeenCalledWith(result);
+        expect(panel?.querySelector('h3')?.textContent).toBe('Get By Id result');
+        expect(panel?.textContent).toContain('Succeeded');
         expect(panel?.querySelector('dt')?.textContent).toBe('Name');
         expect(panel?.querySelector('dd')?.textContent).toBe('Chai');
         expect(Array.from(panel?.querySelectorAll('th') ?? []).map((th) => th.textContent)).toEqual(
@@ -465,33 +826,98 @@ describe('ResourcePageComponent', () => {
         );
       });
 
-      it('renders no selected record panel when nothing is selected', async () => {
+      it('shows the request and response bodies', async () => {
         await open('/resources/orders');
+        await chooseOperation('Get');
 
-        const headings = Array.from(page().querySelectorAll('h3')).map((h3) => h3.textContent);
+        await setVm({ lastOperation: getResult({ productId: 1 }) });
 
-        expect(headings).not.toContain('Selected record');
-        expect(crudFacade.mapSelectedItemSections).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('mutationSections', () => {
-      it('renders the sections the facade maps for the last mutation result', async () => {
-        await open('/resources/orders');
-
-        await setVm({ mutationResult: { id: 9 } });
-
-        const headings = Array.from(page().querySelectorAll('h3')).map((h3) => h3.textContent);
-        expect(crudFacade.mapMutationResultSections).toHaveBeenCalledWith({ id: 9 });
-        expect(headings).toContain('Last mutation result');
+        expect(page().querySelector('[data-testid="operation-request"]')?.textContent).toBe(
+          JSON.stringify({ 'Order ID': '1' }, null, 2),
+        );
+        expect(page().querySelector('[data-testid="operation-response"]')?.textContent).toBe(
+          JSON.stringify({ productId: 1 }, null, 2),
+        );
       });
 
-      it('renders no mutation panel when there is no mutation result', async () => {
+      it.each([
+        {
+          label: 'a get without a record',
+          operation: 'Get',
+          result: getResult(null),
+          title: 'Get By Id result',
+          status: 'No record found',
+        },
+        {
+          label: 'a delete without content',
+          operation: 'Delete',
+          result: { ...getResult(null), operation: 'delete' as const },
+          title: 'Delete result',
+          status: 'Succeeded (no content returned)',
+        },
+        {
+          label: 'a create with a response',
+          operation: 'Create',
+          result: { ...getResult({ id: 9 }), operation: 'create' as const },
+          title: 'Create result',
+          status: 'Succeeded',
+        },
+        {
+          label: 'a failed update',
+          operation: 'Update',
+          result: { ...getResult(null), operation: 'update' as const, errorMessage: 'Gone' },
+          title: 'Update result',
+          status: 'Failed',
+        },
+      ])(
+        'titles and reports the status of $label',
+        async ({ operation, result, title, status }) => {
+          await open('/resources/orders');
+          await chooseOperation(operation);
+
+          await setVm({ lastOperation: result });
+
+          expect(resultPanel()?.querySelector('h3')?.textContent).toBe(title);
+          expect(resultPanel()?.querySelector('header span')?.textContent?.trim()).toBe(status);
+        },
+      );
+
+      it('shows "(no content)" when the response is empty', async () => {
         await open('/resources/orders');
+        await chooseOperation('Get');
 
-        const headings = Array.from(page().querySelectorAll('h3')).map((h3) => h3.textContent);
+        await setVm({ lastOperation: getResult(null) });
 
-        expect(headings).not.toContain('Last mutation result');
+        expect(page().querySelector('[data-testid="operation-response"]')?.textContent).toBe(
+          '(no content)',
+        );
+      });
+
+      it('shows the error message of a failed request', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Get');
+
+        await setVm({ lastOperation: { ...getResult(null), errorMessage: 'Not authorized' } });
+
+        expect(resultPanel()?.textContent).toContain('Not authorized');
+      });
+
+      it('shows the result of Load Record (a get) under Update', async () => {
+        await open('/resources/orders');
+        await chooseOperation('Update');
+
+        await setVm({ lastOperation: getResult({ productId: 1 }) });
+
+        expect(resultPanel()?.querySelector('h3')?.textContent).toBe('Get By Id result');
+      });
+
+      it.each(['Load All', 'Delete'])('hides a get result under %s', async (operation) => {
+        await open('/resources/orders');
+        await chooseOperation(operation);
+
+        await setVm({ lastOperation: getResult({ productId: 1 }) });
+
+        expect(resultPanel()).toBeNull();
       });
     });
   });
