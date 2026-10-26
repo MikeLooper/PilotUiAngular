@@ -1,29 +1,29 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-import { authGuard } from './auth-guard';
-import { APP_ENV } from '../config/app-config';
 import { environment } from '../../../environments/environment.development';
+import { APP_ENV, AppEnvironment } from '../config/app-config';
+import { authGuard } from './auth-guard';
 
 describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) =>
-    TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+  function runGuard(apiBaseUrl: string): ReturnType<typeof authGuard> {
+    const appEnvironment: AppEnvironment = { ...environment, apiBaseUrl };
+    TestBed.configureTestingModule({ providers: [{ provide: APP_ENV, useValue: appEnvironment }] });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: APP_ENV,
-          useValue: {
-            ...environment,
-            apiBaseUrl: 'http://localhost:53060',
-          },
-        },
-      ],
-    });
+    return TestBed.runInInjectionContext(() =>
+      authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    );
+  }
+
+  it('allows activation when an API base URL is configured', () => {
+    const result = runGuard('/api');
+
+    expect(result).toBe(true);
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+  it('blocks activation when the API base URL is empty', () => {
+    const result = runGuard('');
+
+    expect(result).toBe(false);
   });
 });

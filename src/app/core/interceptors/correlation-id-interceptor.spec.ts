@@ -1,17 +1,17 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { CORRELATION_ID_HEADER, correlationIdInterceptor } from './correlation-id-interceptor';
-import { APP_ENV } from '../config/app-config';
+
 import { environment } from '../../../environments/environment.development';
+import { APP_ENV } from '../config/app-config';
+import { CORRELATION_ID_HEADER, correlationIdInterceptor } from './correlation-id-interceptor';
 
 const DOMAIN_URL = '/api/11201/v1/categories/get-all';
 const SYSTEM_URL = '/api/11201/about';
 const NON_TARGET_URL = '/idp/realms/local-realm/protocol/openid-connect/token';
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const FIRST_ID = '11111111-1111-4111-8111-111111111111';
+const SECOND_ID = '22222222-2222-4222-8222-222222222222';
+const CALLER_ID = '7ea2c7f7-8b46-475d-86f8-7aaaa9e4a35b';
 
 describe('correlationIdInterceptor', () => {
   let http: HttpClient;
@@ -31,57 +31,76 @@ describe('correlationIdInterceptor', () => {
 
   afterEach(() => {
     httpMock.verify();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  it('adds a new GUID to domain requests', () => {
-    http.get(DOMAIN_URL).subscribe();
+  it.each([DOMAIN_URL, SYSTEM_URL])('adds a new GUID to target API request %s', (url) => {
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue(FIRST_ID);
 
-    const request = httpMock.expectOne(DOMAIN_URL);
-    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toMatch(UUID_PATTERN);
-    request.flush([]);
+    http.get(url).subscribe();
+
+    const request = httpMock.expectOne(url);
+    request.flush({});
+    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
   });
 
-  it('generates a distinct GUID per request', () => {
+  it('generates a separate GUID for each request', () => {
+    vi.spyOn(crypto, 'randomUUID').mockReturnValueOnce(FIRST_ID).mockReturnValueOnce(SECOND_ID);
+
     http.get(DOMAIN_URL).subscribe();
     http.get(DOMAIN_URL).subscribe();
 
     const requests = httpMock.match(DOMAIN_URL);
-    const ids = requests.map((r) => r.request.headers.get(CORRELATION_ID_HEADER));
-    expect(requests.length).toBe(2);
-    expect(new Set(ids).size).toBe(2);
-    requests.forEach((r) => r.flush([]));
+    requests.forEach((request) => request.flush([]));
+    expect(requests.map((request) => request.request.headers.get(CORRELATION_ID_HEADER))).toEqual([
+      FIRST_ID,
+      SECOND_ID,
+    ]);
   });
 
   it('keeps a valid caller-supplied correlation id', () => {
-    const correlationId = '7ea2c7f7-8b46-475d-86f8-7aaaa9e4a35b';
-    http.get(DOMAIN_URL, { headers: { [CORRELATION_ID_HEADER]: correlationId } }).subscribe();
+    const randomUuid = vi.spyOn(crypto, 'randomUUID');
+
+    http.get(DOMAIN_URL, { headers: { [CORRELATION_ID_HEADER]: CALLER_ID } }).subscribe();
 
     const request = httpMock.expectOne(DOMAIN_URL);
-    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(correlationId);
     request.flush([]);
+    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(CALLER_ID);
+    expect(randomUuid).not.toHaveBeenCalled();
   });
 
-  it('replaces an invalid caller-supplied correlation id', () => {
-    http.get(DOMAIN_URL, { headers: { [CORRELATION_ID_HEADER]: 'not-a-guid' } }).subscribe();
+  it.each(['not-a-guid', ''])('replaces the invalid caller-supplied id "%s"', (callerId) => {
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue(FIRST_ID);
+
+    http.get(DOMAIN_URL, { headers: { [CORRELATION_ID_HEADER]: callerId } }).subscribe();
 
     const request = httpMock.expectOne(DOMAIN_URL);
-    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toMatch(UUID_PATTERN);
     request.flush([]);
-  });
-
-  it('adds a new GUID to system requests', () => {
-    http.get(SYSTEM_URL).subscribe();
-
-    const request = httpMock.expectOne(SYSTEM_URL);
-    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toMatch(UUID_PATTERN);
-    request.flush({});
+    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
   });
 
   it('does not add the header to non-target-API requests', () => {
     http.get(NON_TARGET_URL).subscribe();
 
     const request = httpMock.expectOne(NON_TARGET_URL);
-    expect(request.request.headers.has(CORRELATION_ID_HEADER)).toBe(false);
     request.flush({});
+    expect(request.request.headers.has(CORRELATION_ID_HEADER)).toBe(false);
+  });
+
+  it('builds a v4 GUID from random bytes when crypto.randomUUID is unavailable', () => {
+    const getRandomValues = vi.fn(<T extends ArrayBufferView | null>(array: T): T => {
+      (array as unknown as Uint8Array).fill(0xff);
+      return array;
+    });
+    vi.stubGlobal('crypto', { getRandomValues });
+
+    http.get(DOMAIN_URL).subscribe();
+
+    const request = httpMock.expectOne(DOMAIN_URL);
+    request.flush([]);
+    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(
+      'ffffffff-ffff-4fff-bfff-ffffffffffff',
+    );
   });
 });
