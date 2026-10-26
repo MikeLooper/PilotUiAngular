@@ -3,13 +3,33 @@
 
 export interface ProductsDto {
   categoryId?: (number | string | null);
+
+  /**
+   * Database default is false.
+   */
   discontinued?: boolean;
   productId?: (number | string | null);
-  productName: (string | null);
+  productName: string;
   quantityPerUnit?: (string | null);
-  reorderLevel?: (number | string);
+
+  /**
+   * Database default is 0.
+   */
+  reorderLevel?: (number | string | null);
   supplierId?: (number | string | null);
+
+  /**
+   * Database default is 0.
+   */
   unitPrice?: (number | string | null);
-  unitsInStock?: (number | string);
-  unitsOnOrder?: (number | string);
+
+  /**
+   * Database default is 0.
+   */
+  unitsInStock?: (number | string | null);
+
+  /**
+   * Database default is 0.
+   */
+  unitsOnOrder?: (number | string | null);
 }

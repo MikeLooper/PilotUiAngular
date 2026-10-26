@@ -32,7 +32,6 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
   protected createSampleDto(): EmployeesDto {
     return {
-      employeeId: 0,
       firstName: 'Sample',
       lastName: 'Employee',
       title: 'Representative',

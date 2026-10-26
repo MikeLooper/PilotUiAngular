@@ -33,7 +33,6 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
   protected createSampleDto(): ProductsDto {
     return {
-      productId: 0,
       productName: 'Sample Product',
       unitPrice: 19.99,
       unitsInStock: 20,

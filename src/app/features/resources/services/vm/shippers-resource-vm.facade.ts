@@ -32,7 +32,6 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
   protected createSampleDto(): ShippersDto {
     return {
-      shipperId: 0,
       companyName: 'Sample Shipper',
       phone: '555-0110',
     };

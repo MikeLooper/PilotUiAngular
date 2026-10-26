@@ -19,7 +19,7 @@ describe('SuppliersApiFacade', () => {
   it('adds a supplier', () => {
     let createdId: number | string | undefined;
 
-    facade.add({ supplierId: 0, companyName: 'New Supplier' }).subscribe((result) => {
+    facade.add({ companyName: 'New Supplier' }).subscribe((result) => {
       createdId = result.id;
     });
 

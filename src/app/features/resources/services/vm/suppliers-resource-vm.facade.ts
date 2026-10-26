@@ -33,7 +33,6 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
   protected createSampleDto(): SuppliersDto {
     return {
-      supplierId: 0,
       companyName: 'Sample Supplier',
       contactName: 'Sample Contact',
       city: 'Seattle',

@@ -52,9 +52,9 @@ export class ApiExplorerComponent {
         deleteId: '1',
         deleteSecondId: '',
         addPayload:
-          '{\n  "categoryId": 0,\n  "categoryName": "New category",\n  "description": "Description",\n  "picture": null\n}',
+          '{\n  "categoryName": "New category",\n  "description": "Description",\n  "picture": null\n}',
         updatePayload:
-          '{\n  "categoryId": 1,\n  "categoryName": "Updated category",\n  "description": "Updated description",\n  "picture": null\n}',
+          '{\n  "categoryId": 1,\n  "categoryName": "Updated name",\n  "description": "Updated description",\n  "picture": null\n}',
       },
       loadAll: () => this.apiExplorerService.loadCategories(),
       getById: (id) => this.apiExplorerService.getCategoryById(id),
@@ -94,7 +94,7 @@ export class ApiExplorerComponent {
         deleteId: '10',
         deleteSecondId: '',
         addPayload:
-          '{\n  "employeeId": 0,\n  "lastName": "Doe",\n  "firstName": "John",\n  "title": "Developer",\n  "titleOfCourtesy": "Mr.",\n  "birthDate": null,\n  "hireDate": null,\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "homePhone": "555-0123",\n  "extension": "123",\n  "photo": null,\n  "notes": null,\n  "reportsTo": null,\n  "photoPath": null\n}',
+          '{\n  "lastName": "Doe",\n  "firstName": "John",\n  "title": "Developer",\n  "titleOfCourtesy": "Mr.",\n  "birthDate": null,\n  "hireDate": null,\n  "address": "1 Main St",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "homePhone": "555-0123",\n  "extension": "123",\n  "photo": null,\n  "notes": null,\n  "reportsTo": null,\n  "photoPath": null\n}',
         updatePayload:
           '{\n  "employeeId": 1,\n  "lastName": "Davolio",\n  "firstName": "Nancy",\n  "title": "Sales Representative",\n  "titleOfCourtesy": "Ms.",\n  "address": "507 - 20th Ave.",\n  "city": "Seattle",\n  "region": "WA",\n  "postalCode": "98122",\n  "country": "USA"\n}',
       },
@@ -137,7 +137,7 @@ export class ApiExplorerComponent {
         deleteId: '11077',
         deleteSecondId: '',
         addPayload:
-          '{\n  "orderId": 0,\n  "customerId": "ALFKI",\n  "employeeId": 1,\n  "orderDate": "2026-01-01T00:00:00",\n  "requiredDate": null,\n  "shippedDate": null,\n  "shipVia": 1,\n  "freight": 10.5,\n  "shipName": "Acme",\n  "shipAddress": "123 Ship St",\n  "shipCity": "Seattle",\n  "shipRegion": null,\n  "shipPostalCode": "98101",\n  "shipCountry": "USA"\n}',
+          '{\n  "customerId": "ALFKI",\n  "employeeId": 1,\n  "orderDate": "2026-01-01T00:00:00",\n  "requiredDate": null,\n  "shippedDate": null,\n  "shipVia": 1,\n  "freight": 10.5,\n  "shipName": "Acme",\n  "shipAddress": "123 Ship St",\n  "shipCity": "Seattle",\n  "shipRegion": null,\n  "shipPostalCode": "98101",\n  "shipCountry": "USA"\n}',
         updatePayload:
           '{\n  "orderId": 10248,\n  "customerId": "ALFKI",\n  "employeeId": 1,\n  "shipCity": "Portland",\n  "shipCountry": "USA"\n}',
       },
@@ -158,7 +158,7 @@ export class ApiExplorerComponent {
         deleteId: '78',
         deleteSecondId: '',
         addPayload:
-          '{\n  "productId": 0,\n  "productName": "New Product",\n  "supplierId": 1,\n  "categoryId": 1,\n  "quantityPerUnit": "10 boxes",\n  "unitPrice": 20.0,\n  "unitsInStock": 25,\n  "unitsOnOrder": 0,\n  "reorderLevel": 5,\n  "discontinued": false\n}',
+          '{\n  "productName": "New Product",\n  "supplierId": 1,\n  "categoryId": 1,\n  "quantityPerUnit": "10 boxes",\n  "unitPrice": 20.0,\n  "unitsInStock": 25,\n  "unitsOnOrder": 0,\n  "reorderLevel": 5,\n  "discontinued": false\n}',
         updatePayload:
           '{\n  "productId": 1,\n  "productName": "Updated Product",\n  "unitPrice": 24.5,\n  "unitsInStock": 18,\n  "discontinued": false\n}',
       },
@@ -179,7 +179,7 @@ export class ApiExplorerComponent {
         deleteId: '4',
         deleteSecondId: '',
         addPayload:
-          '{\n  "shipperId": 0,\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
+          '{\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
         updatePayload:
           '{\n  "shipperId": 1,\n  "companyName": "Speedy Express",\n  "phone": "555-3333"\n}',
       },
@@ -200,7 +200,7 @@ export class ApiExplorerComponent {
         deleteId: '30',
         deleteSecondId: '',
         addPayload:
-          '{\n  "supplierId": 0,\n  "companyName": "Supplier One",\n  "contactName": "Ada",\n  "contactTitle": "Manager",\n  "address": "42 Supply Ave",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0110",\n  "fax": null,\n  "homePage": null\n}',
+          '{\n  "companyName": "Supplier One",\n  "contactName": "Ada",\n  "contactTitle": "Manager",\n  "address": "42 Supply Ave",\n  "city": "Seattle",\n  "region": null,\n  "postalCode": "98101",\n  "country": "USA",\n  "phone": "555-0110",\n  "fax": null,\n  "homePage": null\n}',
         updatePayload:
           '{\n  "supplierId": 1,\n  "companyName": "Updated Supplier",\n  "contactName": "Exotic Liquids",\n  "phone": "555-0111"\n}',
       },

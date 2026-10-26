@@ -33,7 +33,6 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
   protected createSampleDto(): CategoriesDto {
     return {
-      categoryId: 0,
       categoryName: 'Sample category',
       description: 'Created from Categories resource page',
       picture: null,
@@ -43,7 +42,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
   protected updateSampleDto(primaryId?: string): CategoriesDto {
     return {
       categoryId: this.asNumberishId(primaryId, this.defaultPrimaryId),
-      categoryName: 'Updated category',
+      categoryName: 'Updated name',
       description: 'Updated from Categories resource page',
       picture: null,
     };
