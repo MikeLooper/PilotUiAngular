@@ -157,6 +157,20 @@ describe('Resource VM sample payloads', () => {
       httpMock = context.httpMock;
     });
 
+    it('keeps quantity at least 1 and discount between 0 and 1 in the add payload', () => {
+      facade.createSample();
+
+      const request = expectPost(httpMock, `${rootUrl}/v1/order-details/add`);
+      const body = request.request.body as { quantity: number; discount: number };
+
+      expect(body.quantity).toBeGreaterThanOrEqual(1);
+      expect(body.discount).toBeGreaterThanOrEqual(0);
+      expect(body.discount).toBeLessThanOrEqual(1);
+
+      request.flush({ id: 1 });
+      flushReload(httpMock, 'order-details');
+    });
+
     it('keeps quantity at least 1 and discount between 0 and 1', () => {
       facade.updateSample();
 
