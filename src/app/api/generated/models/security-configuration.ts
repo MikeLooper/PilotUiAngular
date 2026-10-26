@@ -18,7 +18,7 @@ export interface SecurityConfiguration {
   authority?: (string | null);
 
   /**
-   * Gets or sets the base URL of the Security server (e.g. "http://localhost:11141").
+   * Gets or sets the base URL of the Security server (e.g. "http://localhost:55001").
    */
   baseUrl?: (string | null);
 

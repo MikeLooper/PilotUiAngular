@@ -4,7 +4,7 @@
 export interface SuppliersDto {
   address?: (string | null);
   city?: (string | null);
-  companyName: (string | null);
+  companyName: string;
   contactName?: (string | null);
   contactTitle?: (string | null);
   country?: (string | null);

@@ -3,20 +3,32 @@
 
 export interface EmployeesDto {
   address?: (string | null);
+
+  /**
+   * Must be earlier than the current date. Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
+   */
   birthDate?: (string | null);
   city?: (string | null);
   country?: (string | null);
   employeeId?: (number | string | null);
   extension?: (string | null);
-  firstName: (string | null);
+  firstName: string;
+
+  /**
+   * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
+   */
   hireDate?: (string | null);
   homePhone?: (string | null);
-  lastName: (string | null);
+  lastName: string;
   notes?: (string | null);
   photo?: (string | null);
   photoPath?: (string | null);
   postalCode?: (string | null);
   region?: (string | null);
+
+  /**
+   * The employeeId of this employee's manager.
+   */
   reportsTo?: (number | string | null);
   title?: (string | null);
   titleOfCourtesy?: (string | null);

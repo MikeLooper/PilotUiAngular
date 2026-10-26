@@ -32,7 +32,6 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
   protected createSampleDto(): OrdersDto {
     return {
-      orderId: 0,
       customerId: 'ALFKI',
       employeeId: 1,
       shipCity: 'Seattle',

@@ -4,9 +4,21 @@
 export interface OrdersDto {
   customerId?: (string | null);
   employeeId?: (number | string | null);
+
+  /**
+   * Database default is 0.
+   */
   freight?: (number | string | null);
+
+  /**
+   * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
+   */
   orderDate?: (string | null);
   orderId?: (number | string | null);
+
+  /**
+   * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
+   */
   requiredDate?: (string | null);
   shipAddress?: (string | null);
   shipCity?: (string | null);
@@ -14,6 +26,14 @@ export interface OrdersDto {
   shipName?: (string | null);
   shipPostalCode?: (string | null);
   shipRegion?: (string | null);
+
+  /**
+   * The shipperId of the shipper used for this order.
+   */
   shipVia?: (number | string | null);
+
+  /**
+   * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
+   */
   shippedDate?: (string | null);
 }

@@ -3,7 +3,7 @@
 
 export interface CategoriesDto {
   categoryId?: (number | string | null);
-  categoryName: (string | null);
+  categoryName: string;
   description?: (string | null);
   picture?: (string | null);
 }
