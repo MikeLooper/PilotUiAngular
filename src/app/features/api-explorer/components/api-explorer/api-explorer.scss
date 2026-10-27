@@ -26,12 +26,19 @@
   gap: 0.5rem;
 }
 
-.resource-links a {
+.resource-links button {
   background: #eef5fb;
+  border: 1px solid transparent;
   border-radius: 999px;
   color: #123a5e;
+  cursor: pointer;
+  font: inherit;
   padding: 0.25rem 0.65rem;
-  text-decoration: none;
+}
+
+.resource-links button.is-active {
+  background: #123a5e;
+  color: #ffffff;
 }
 
 .resource-panel {

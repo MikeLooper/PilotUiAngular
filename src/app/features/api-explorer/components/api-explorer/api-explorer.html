@@ -4,7 +4,11 @@
       <h2>API Explorer</h2>
       <p>Feature UI for consuming all generated facade endpoints across resources.</p>
       <div class="explorer-page__header-actions">
-        <app-button label="Run System Healthcheck" [type]="'button'" (click)="runHealthcheck()"></app-button>
+        <app-button
+          label="Run System Healthcheck"
+          [type]="'button'"
+          (click)="runHealthcheck()"
+        ></app-button>
         <app-button label="Load About" [type]="'button'" (click)="runAbout()"></app-button>
       </div>
       @if (healthState().itemResult) {
@@ -19,7 +23,14 @@
   @if (showNavigation() && !resourceKey()) {
     <nav class="resource-links" aria-label="API resource quick links">
       @for (section of sections; track section.key) {
-        <a [href]="'#' + section.key">{{ section.title }}</a>
+        <button
+          type="button"
+          [class.is-active]="selectedKey() === section.key"
+          [attr.aria-pressed]="selectedKey() === section.key"
+          (click)="selectSection(section)"
+        >
+          {{ section.title }}
+        </button>
       }
     </nav>
   }
@@ -29,7 +40,7 @@
       <h3>{{ section.title }}</h3>
 
       <div class="resource-panel__row">
-        <app-button label="Load All" [type]="'button'" (click)="section.loadAll()"></app-button>
+        <app-button label="Load All" [type]="'button'" (click)="loadAll(section)"></app-button>
       </div>
 
       <div class="resource-panel__row resource-panel__row--ids">
@@ -45,11 +56,7 @@
           </label>
         }
 
-        <app-button
-          label="Get By ID"
-          [type]="'button'"
-          (click)="section.getById(section.form.getId, section.form.getSecondId)"
-        ></app-button>
+        <app-button label="Get By ID" [type]="'button'" (click)="getById(section)"></app-button>
       </div>
 
       <div class="resource-panel__row resource-panel__row--payloads">
@@ -57,11 +64,7 @@
           Add payload (JSON)
           <textarea [(ngModel)]="section.form.addPayload"></textarea>
         </label>
-        <app-button
-          label="Add"
-          [type]="'button'"
-          (click)="section.add(section.form.addPayload)"
-        ></app-button>
+        <app-button label="Add" [type]="'button'" (click)="add(section)"></app-button>
       </div>
 
       <div class="resource-panel__row resource-panel__row--payloads">
@@ -69,11 +72,7 @@
           Update payload (JSON)
           <textarea [(ngModel)]="section.form.updatePayload"></textarea>
         </label>
-        <app-button
-          label="Update"
-          [type]="'button'"
-          (click)="section.update(section.form.updatePayload)"
-        ></app-button>
+        <app-button label="Update" [type]="'button'" (click)="update(section)"></app-button>
       </div>
 
       <div class="resource-panel__row resource-panel__row--ids">
@@ -89,11 +88,7 @@
           </label>
         }
 
-        <app-button
-          label="Delete"
-          [type]="'button'"
-          (click)="section.delete(section.form.deleteId, section.form.deleteSecondId)"
-        ></app-button>
+        <app-button label="Delete" [type]="'button'" (click)="delete(section)"></app-button>
       </div>
 
       @if (section.state().loading) {
@@ -106,16 +101,10 @@
 
       <div class="resource-panel__result-grid">
         <div>
-          <h4>List Result</h4>
-          <pre>{{ section.state().listResult | json }}</pre>
-        </div>
-        <div>
-          <h4>Item Result</h4>
-          <pre>{{ section.state().itemResult | json }}</pre>
-        </div>
-        <div>
-          <h4>Mutation Result</h4>
-          <pre>{{ section.state().mutationResult | json }}</pre>
+          <h4>Result</h4>
+          @if (!section.state().loading && !section.state().error) {
+            <pre>{{ results()[section.key] | json }}</pre>
+          }
         </div>
       </div>
     </article>

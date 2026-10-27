@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, Signal, computed, inject, input } from '@angular/core';
+import { Component, OnInit, Signal, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../../shared/components/button/button';
 import { ApiExplorerService, ResourcePanelState } from '../../services/api-explorer';
@@ -12,6 +12,8 @@ interface CrudFormState {
   addPayload: string;
   updatePayload: string;
 }
+
+type ResultKind = 'list' | 'item' | 'mutation';
 
 interface CrudSectionConfig {
   readonly key: string;
@@ -33,14 +35,14 @@ interface CrudSectionConfig {
   templateUrl: './api-explorer.html',
   styleUrl: './api-explorer.scss',
 })
-export class ApiExplorerComponent {
+export class ApiExplorerComponent implements OnInit {
   private readonly apiExplorerService = inject(ApiExplorerService);
 
   public readonly resourceKey = input<string | null>(null);
   public readonly showHeader = input(true);
   public readonly showNavigation = input(true);
 
-  protected readonly sections: readonly CrudSectionConfig[] = [
+  protected readonly sections: readonly [CrudSectionConfig, ...CrudSectionConfig[]] = [
     {
       key: 'categories',
       title: 'Categories',
@@ -178,8 +180,7 @@ export class ApiExplorerComponent {
         getSecondId: '',
         deleteId: '4',
         deleteSecondId: '',
-        addPayload:
-          '{\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
+        addPayload: '{\n  "companyName": "Fast Freight",\n  "phone": "555-4444"\n}',
         updatePayload:
           '{\n  "shipperId": 1,\n  "companyName": "Speedy Express",\n  "phone": "555-3333"\n}',
       },
@@ -213,14 +214,74 @@ export class ApiExplorerComponent {
   ];
 
   protected readonly healthState = this.apiExplorerService.system;
+  protected readonly selectedKey = signal(this.sections[0].key);
+  private readonly resultKinds = signal<Readonly<Record<string, ResultKind>>>({});
+  protected readonly results = computed(() => {
+    const kinds = this.resultKinds();
+
+    return Object.fromEntries(
+      this.sections.map((section) => {
+        const state = section.state();
+        const kind = kinds[section.key] ?? 'list';
+        const result =
+          kind === 'list'
+            ? state.listResult
+            : kind === 'item'
+              ? state.itemResult
+              : state.mutationResult;
+
+        return [section.key, result];
+      }),
+    ) as Readonly<Record<string, unknown>>;
+  });
   protected readonly visibleSections = computed(() => {
-    const key = this.resourceKey();
-    if (!key || key === 'system') {
+    const key = this.resourceKey() || this.selectedKey();
+    if (key === 'system') {
       return this.sections;
     }
 
     return this.sections.filter((section) => section.key === key);
   });
+
+  public ngOnInit(): void {
+    if (!this.resourceKey()) {
+      this.selectSection(this.sections[0]);
+    }
+  }
+
+  protected selectSection(section: CrudSectionConfig): void {
+    this.selectedKey.set(section.key);
+    this.loadAll(section);
+  }
+
+  protected loadAll(section: CrudSectionConfig): void {
+    this.showResult(section, 'list');
+    section.loadAll();
+  }
+
+  protected getById(section: CrudSectionConfig): void {
+    this.showResult(section, 'item');
+    section.getById(section.form.getId, section.form.getSecondId);
+  }
+
+  protected add(section: CrudSectionConfig): void {
+    this.showResult(section, 'mutation');
+    section.add(section.form.addPayload);
+  }
+
+  protected update(section: CrudSectionConfig): void {
+    this.showResult(section, 'mutation');
+    section.update(section.form.updatePayload);
+  }
+
+  protected delete(section: CrudSectionConfig): void {
+    this.showResult(section, 'mutation');
+    section.delete(section.form.deleteId, section.form.deleteSecondId);
+  }
+
+  private showResult(section: CrudSectionConfig, kind: ResultKind): void {
+    this.resultKinds.update((kinds) => ({ ...kinds, [section.key]: kind }));
+  }
 
   protected runHealthcheck(): void {
     this.apiExplorerService.runHealthcheck();

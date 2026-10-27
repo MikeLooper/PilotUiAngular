@@ -21,8 +21,37 @@
       }
     },
     {
+      "label": "test: all",
+      "detail": "Run every unit test once (npm test).",
       "type": "npm",
       "script": "test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": "$tsc"
+    },
+    {
+      "label": "test: current file",
+      "detail": "Run the spec for the active editor file (a spec, or the production file beside it).",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/.vscode/run-current-test.js",
+        "${relativeFile}"
+      ],
+      "group": "test",
+      "problemMatcher": "$tsc",
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "label": "test: watch",
+      "detail": "Re-run affected unit tests whenever files change.",
+      "type": "shell",
+      "command": "npx ng test --watch",
+      "group": "test",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -30,10 +59,37 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": {
-            "regexp": "Changes detected"
+            "regexp": "Building\\.\\.\\."
           },
           "endsPattern": {
             "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    },
+    {
+      "label": "test: debug current file (wait for debugger)",
+      "detail": "Used by the 'Debug unit tests: current file' launch configuration.",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/.vscode/run-current-test.js",
+        "${relativeFile}",
+        "--debug"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "ng-test-debug",
+        "pattern": {
+          "regexp": "^__no_problems__$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Building\\.\\.\\."
+          },
+          "endsPattern": {
+            "regexp": "Debugger listening on"
           }
         }
       }

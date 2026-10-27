@@ -3,6 +3,11 @@ import type { AboutResponse } from '../../../../api/generated';
 
 export type SortDirection = 'asc' | 'desc';
 
+export type ResourceOperation = 'get' | 'create' | 'update' | 'delete';
+
+/** The operation bubble selected on a resource page: list every record, or one record operation. */
+export type ResourcePageMode = 'load-all' | ResourceOperation;
+
 export type ResourceKey =
   | 'categories'
   | 'customers'
@@ -22,14 +27,22 @@ export interface ResourceRecord {
   readonly raw: unknown;
 }
 
+export interface ResourceOperationResult {
+  readonly operation: ResourceOperation;
+  /** The ids or payload sent with the request. */
+  readonly request: unknown;
+  /** The response body; null when the API returned no content or the request failed. */
+  readonly response: unknown;
+  readonly errorMessage: string | null;
+}
+
 export interface ResourceCrudState {
   readonly items: readonly ResourceRecord[];
   readonly searchTerm: string;
   readonly page: number;
   readonly pageSize: number;
   readonly sortDirection: SortDirection;
-  readonly selectedItem: unknown | null;
-  readonly mutationResult: unknown | null;
+  readonly lastOperation: ResourceOperationResult | null;
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
 }
@@ -87,14 +100,17 @@ export interface ResourceCrudVmFacade {
   onPageEnter(): ResourcePageEntryState;
   mapSelectedItemSections(value: unknown): readonly ResourceDetailSection[];
   mapMutationResultSections(value: unknown): readonly ResourceDetailSection[];
+  mapOperationResultSections(result: ResourceOperationResult): readonly ResourceDetailSection[];
+  createSamplePayload(): object;
+  updateSamplePayload(primaryId?: string, secondaryId?: string): object;
   reload(forceRefresh?: boolean): void;
   setSearchTerm(term: string): void;
   toggleSortDirection(): void;
   goToPage(page: number): void;
   fetchById(primaryId: string, secondaryId?: string): void;
   deleteById(primaryId: string, secondaryId?: string): void;
-  createSample(): void;
-  updateSample(primaryId?: string, secondaryId?: string): void;
+  create(payload: object): void;
+  update(payload: object): void;
 }
 
 export interface SystemVmState {

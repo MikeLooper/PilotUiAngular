@@ -15,12 +15,14 @@
       }
     },
     {
-      "name": "ng test",
-      "type": "chrome",
-      "request": "launch",
-      "preLaunchTask": "npm: test",
-      "url": "http://localhost:9876/debug.html",
-      "webRoot": "${workspaceFolder}"
+      "name": "Debug unit tests: current file",
+      "type": "node",
+      "request": "attach",
+      "preLaunchTask": "test: debug current file (wait for debugger)",
+      "port": 9229,
+      "continueOnAttach": true,
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     }
   ]
 }

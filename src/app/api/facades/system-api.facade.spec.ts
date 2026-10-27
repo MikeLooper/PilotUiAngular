@@ -1,14 +1,19 @@
 import { HttpTestingController } from '@angular/common/http/testing';
+import { lastValueFrom } from 'rxjs';
+
 import { AboutResponse } from '../generated';
 import { SystemApiFacade } from './system-api.facade';
-import { expectGet, setupFacadeTestbed } from './testing/setup-facade-testbed';
+import { setupFacadeTestbed } from './testing/setup-facade-testbed';
+
+const ROOT_URL = 'http://localhost:53060';
+const ABOUT: AboutResponse = { name: 'PilotApiDotNet', apiVersion: '1.1.2' };
 
 describe('SystemApiFacade', () => {
   let facade: SystemApiFacade;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    const context = setupFacadeTestbed(SystemApiFacade);
+    const context = setupFacadeTestbed(SystemApiFacade, ROOT_URL);
     facade = context.facade;
     httpMock = context.httpMock;
   });
@@ -17,35 +22,51 @@ describe('SystemApiFacade', () => {
     httpMock.verify();
   });
 
-  it('runs healthcheck endpoint', () => {
-    let health = '';
-
-    facade.getHealthcheck().subscribe((result) => {
-      health = result;
-    });
-
-    const request = expectGet(httpMock, 'http://localhost:53060/healthcheck');
-    request.flush('Healthy');
-
-    expect(health).toBe('Healthy');
+  it('creates the facade', () => {
+    expect(facade).toBeTruthy();
   });
 
-  it('runs about endpoint', () => {
-    let about: AboutResponse | null = null;
+  describe('getHealthcheck', () => {
+    it('requests the healthcheck endpoint and emits the status text', async () => {
+      const result = lastValueFrom(facade.getHealthcheck());
 
-    facade.getAbout().subscribe((result) => {
-      about = result;
+      httpMock.expectOne({ method: 'GET', url: `${ROOT_URL}/healthcheck` }).flush('Healthy');
+
+      expect(await result).toBe('Healthy');
     });
 
-    const request = expectGet(httpMock, 'http://localhost:53060/about?show-details=true');
-    request.flush({
-      name: 'PilotApiDotNet',
-      apiVersion: '1.1.2',
+    it('propagates HTTP errors to the caller', async () => {
+      const result = lastValueFrom(facade.getHealthcheck());
+
+      httpMock
+        .expectOne(`${ROOT_URL}/healthcheck`)
+        .flush(null, { status: 503, statusText: 'Service Unavailable' });
+
+      await expect(result).rejects.toMatchObject({ status: 503 });
+    });
+  });
+
+  describe('getAbout', () => {
+    it('requests details by default and emits the about response', async () => {
+      const result = lastValueFrom(facade.getAbout());
+
+      const request = httpMock.expectOne(
+        (candidate) => candidate.method === 'GET' && candidate.url === `${ROOT_URL}/about`,
+      );
+      request.flush(ABOUT);
+
+      expect(request.request.params.get('show-details')).toBe('true');
+      expect(await result).toEqual(ABOUT);
     });
 
-    expect(about).toEqual({
-      name: 'PilotApiDotNet',
-      apiVersion: '1.1.2',
+    it('passes show-details=false when details are not requested', async () => {
+      const result = lastValueFrom(facade.getAbout(false));
+
+      const request = httpMock.expectOne((candidate) => candidate.url === `${ROOT_URL}/about`);
+      request.flush(ABOUT);
+
+      expect(request.request.params.get('show-details')).toBe('false');
+      expect(await result).toEqual(ABOUT);
     });
   });
 });

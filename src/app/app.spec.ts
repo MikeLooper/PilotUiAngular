@@ -1,25 +1,42 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
+
 import { AppComponent } from './app';
 
-describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+@Component({ template: '<p>Routed page content</p>' })
+class RoutedPageComponent {}
+
+describe('AppComponent', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter([])],
-    }).compileComponents();
+      providers: [provideRouter([{ path: 'page', component: RoutedPageComponent }])],
+    });
   });
 
-  it('should create the app', () => {
+  it('creates the component', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render shell content', async () => {
+  it('renders the application header with the Pilot UI title', async () => {
     const fixture = TestBed.createComponent(AppComponent);
+
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.app-shell')).toBeTruthy();
+
+    const heading = (fixture.nativeElement as HTMLElement).querySelector('app-header h1');
+    expect(heading?.textContent?.trim()).toBe('Pilot UI');
+  });
+
+  it('renders the routed page inside the main content region', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+
+    await TestBed.inject(Router).navigateByUrl('/page');
+    await fixture.whenStable();
+
+    const main = (fixture.nativeElement as HTMLElement).querySelector('main');
+    expect(main?.textContent).toContain('Routed page content');
   });
 });
