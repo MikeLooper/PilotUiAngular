@@ -8,10 +8,10 @@ export class ProductsResourceService extends CrudResourceStateService<ProductsDt
   public constructor(productsApiFacade: ProductsApiFacade) {
     super('Products', {
       loadAll: () => productsApiFacade.getAll(true),
-      getById: (id) => productsApiFacade.getById(id),
+      getById: (id) => productsApiFacade.getById(Number(id)),
       add: (dto) => productsApiFacade.add(dto),
       update: (dto) => productsApiFacade.update(dto),
-      delete: (id) => productsApiFacade.delete(id),
+      delete: (id) => productsApiFacade.delete(Number(id)),
     });
   }
 }

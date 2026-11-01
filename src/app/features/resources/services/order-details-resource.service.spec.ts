@@ -52,10 +52,10 @@ describe('OrderDetailsResourceService', () => {
       expect(service.state().itemResult).toEqual(ITEM);
     });
 
-    it('passes an empty order id when the second id is missing', () => {
+    it('passes a NaN order id when the second id is missing', () => {
       service.getById('1');
 
-      expect(facade.getById).toHaveBeenCalledExactlyOnceWith(1, '');
+      expect(facade.getById).toHaveBeenCalledExactlyOnceWith(1, NaN);
     });
   });
 
@@ -89,10 +89,10 @@ describe('OrderDetailsResourceService', () => {
       expect(service.state().mutationResult).toEqual({ success: true });
     });
 
-    it('passes an empty order id when the second id is missing', () => {
+    it('passes a NaN order id when the second id is missing', () => {
       service.deleteById('1');
 
-      expect(facade.delete).toHaveBeenCalledExactlyOnceWith(1, '');
+      expect(facade.delete).toHaveBeenCalledExactlyOnceWith(1, NaN);
     });
   });
 });

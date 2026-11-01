@@ -10,7 +10,7 @@ import { RequestBuilder } from '../../request-builder';
 import { ProductsDto } from '../../models/products-dto';
 
 export interface V1ProductsGetProductIdGet$Params {
-  productId: (number | string);
+  productId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

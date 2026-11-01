@@ -8,10 +8,10 @@ export class CategoriesResourceService extends CrudResourceStateService<Categori
   public constructor(categoriesApiFacade: CategoriesApiFacade) {
     super('Categories', {
       loadAll: () => categoriesApiFacade.getAllDtos(true),
-      getById: (id) => categoriesApiFacade.getById(id),
+      getById: (id) => categoriesApiFacade.getById(Number(id)),
       add: (dto) => categoriesApiFacade.add(dto),
       update: (dto) => categoriesApiFacade.update(dto),
-      delete: (id) => categoriesApiFacade.delete(id),
+      delete: (id) => categoriesApiFacade.delete(Number(id)),
     });
   }
 }

@@ -8,10 +8,10 @@ export class OrderDetailsResourceService extends CrudResourceStateService<OrderD
   public constructor(orderDetailsApiFacade: OrderDetailsApiFacade) {
     super('OrderDetails', {
       loadAll: () => orderDetailsApiFacade.getAll(true),
-      getById: (id, secondId) => orderDetailsApiFacade.getById(id, secondId ?? ''),
+      getById: (id, secondId) => orderDetailsApiFacade.getById(Number(id), Number(secondId)),
       add: (dto) => orderDetailsApiFacade.add(dto),
       update: (dto) => orderDetailsApiFacade.update(dto),
-      delete: (id, secondId) => orderDetailsApiFacade.delete(id, secondId ?? ''),
+      delete: (id, secondId) => orderDetailsApiFacade.delete(Number(id), Number(secondId)),
     });
   }
 }

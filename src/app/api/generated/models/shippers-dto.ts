@@ -4,5 +4,5 @@
 export interface ShippersDto {
   companyName: string;
   phone?: (string | null);
-  shipperId?: (number | string | null);
+  shipperId?: (number | null);
 }

@@ -17,27 +17,27 @@ export class ProductsApiFacade extends BaseResourceApiFacade<ProductsDto> {
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(productId: number | string): Observable<ProductsDto> {
+  public getById(productId: number): Observable<ProductsDto | null> {
     return this.apiClient.invoke(v1ProductsGetProductIdGet, { productId });
   }
 
   public add(product: ProductsDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(v1ProductsAddPost, { body: product }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1ProductsAddPost, { body: product })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(product: ProductsDto): Observable<void> {
     return this.apiClient.invoke(v1ProductsUpdatePut, { body: product }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(productId: number | string): Observable<void> {
+  public delete(productId: number): Observable<void> {
     return this.apiClient.invoke(v1ProductsDeleteProductIdDelete, { productId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

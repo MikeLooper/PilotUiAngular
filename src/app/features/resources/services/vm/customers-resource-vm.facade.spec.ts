@@ -59,12 +59,12 @@ describe('CustomersResourceVmFacade', () => {
   });
 
   describe('pageDefaults', () => {
-    it('starts with ten customers per page filtered by "alf"', () => {
+    it('starts with ten customers per page with no search filter', () => {
       const pageDefaults = facade.pageDefaults;
 
       expect(pageDefaults).toMatchObject({
         initialPrimaryId: 'ALFKI',
-        initialSearchTerm: 'alf',
+        initialSearchTerm: '',
         pageSize: 10,
         autoLoadOnEnter: true,
       });

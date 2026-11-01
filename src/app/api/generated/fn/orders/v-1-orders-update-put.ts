@@ -18,7 +18,7 @@ export interface V1OrdersUpdatePut$Params {
       body: OrdersDto
 }
 
-export function v1OrdersUpdatePut(http: HttpClient, rootUrl: string, params: V1OrdersUpdatePut$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function v1OrdersUpdatePut(http: HttpClient, rootUrl: string, params: V1OrdersUpdatePut$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, v1OrdersUpdatePut.PATH, 'put');
   if (params) {
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
@@ -26,11 +26,11 @@ export function v1OrdersUpdatePut(http: HttpClient, rootUrl: string, params: V1O
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }

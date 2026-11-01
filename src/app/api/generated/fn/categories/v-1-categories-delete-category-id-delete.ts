@@ -9,7 +9,7 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface V1CategoriesDeleteCategoryIdDelete$Params {
-  categoryId: (number | string);
+  categoryId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.
@@ -17,7 +17,7 @@ export interface V1CategoriesDeleteCategoryIdDelete$Params {
   'X-Correlation-Id'?: string;
 }
 
-export function v1CategoriesDeleteCategoryIdDelete(http: HttpClient, rootUrl: string, params: V1CategoriesDeleteCategoryIdDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function v1CategoriesDeleteCategoryIdDelete(http: HttpClient, rootUrl: string, params: V1CategoriesDeleteCategoryIdDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, v1CategoriesDeleteCategoryIdDelete.PATH, 'delete');
   if (params) {
     rb.path('categoryId', params.categoryId, {});
@@ -25,11 +25,11 @@ export function v1CategoriesDeleteCategoryIdDelete(http: HttpClient, rootUrl: st
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }

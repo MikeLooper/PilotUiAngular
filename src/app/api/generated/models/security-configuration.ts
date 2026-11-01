@@ -30,7 +30,7 @@ export interface SecurityConfiguration {
   /**
    * Gets or sets the clock skew tolerance, in seconds, applied to token expiry validation.
    */
-  clockSkewSeconds?: (number | string);
+  clockSkewSeconds?: number;
 
   /**
    * Gets or sets the Security realm (e.g. "local-realm").

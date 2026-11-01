@@ -17,7 +17,9 @@ const OTHER_DATA_SOURCE: DataSourceOption = {
 /** Minimal concrete facade that exposes the protected cache API the same way real facades do. */
 @Injectable({ providedIn: 'root' })
 class TestResourceApiFacade extends BaseResourceApiFacade<string> {
-  public readonly fetchAllSource = vi.fn<() => Observable<readonly string[]>>(() => of(['a', 'b']));
+  public readonly fetchAllSource = vi.fn<() => Observable<readonly string[] | null>>(() =>
+    of(['a', 'b']),
+  );
 
   public getAll(forceRefresh = false): Observable<readonly string[]> {
     return this.getAllCached(forceRefresh);
@@ -27,7 +29,7 @@ class TestResourceApiFacade extends BaseResourceApiFacade<string> {
     this.clearCache();
   }
 
-  protected fetchAll(): Observable<readonly string[]> {
+  protected fetchAll(): Observable<readonly string[] | null> {
     return this.fetchAllSource();
   }
 }
@@ -53,6 +55,14 @@ describe('BaseResourceApiFacade', () => {
   });
 
   describe('getAllCached', () => {
+    it('emits an empty list when the source emits null', async () => {
+      facade.fetchAllSource.mockReturnValue(of(null));
+
+      const result = await lastValueFrom(facade.getAll());
+
+      expect(result).toEqual([]);
+    });
+
     it('fetches from the source on the first call', async () => {
       const result = await lastValueFrom(facade.getAll());
 

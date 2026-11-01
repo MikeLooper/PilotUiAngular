@@ -10,7 +10,7 @@ import { RequestBuilder } from '../../request-builder';
 import { CategoriesDto } from '../../models/categories-dto';
 
 export interface V1CategoriesGetCategoryIdGet$Params {
-  categoryId: (number | string);
+  categoryId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

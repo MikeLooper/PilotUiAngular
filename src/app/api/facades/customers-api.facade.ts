@@ -17,27 +17,27 @@ export class CustomersApiFacade extends BaseResourceApiFacade<CustomersDto> {
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(customerId: string): Observable<CustomersDto> {
+  public getById(customerId: string): Observable<CustomersDto | null> {
     return this.apiClient.invoke(v1CustomersGetCustomerIdGet, { customerId });
   }
 
   public add(customer: CustomersDto): Observable<AddResponseString> {
-    return this.apiClient.invoke(v1CustomersAddPost, { body: customer }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1CustomersAddPost, { body: customer })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(customer: CustomersDto): Observable<void> {
     return this.apiClient.invoke(v1CustomersUpdatePut, { body: customer }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
   public delete(customerId: string): Observable<void> {
     return this.apiClient.invoke(v1CustomersDeleteCustomerIdDelete, { customerId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

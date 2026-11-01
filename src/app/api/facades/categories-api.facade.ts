@@ -20,30 +20,32 @@ export class CategoriesApiFacade extends BaseResourceApiFacade<CategoriesDto> {
   }
 
   public getAll(forceRefresh = false): Observable<readonly CategoryListItem[]> {
-    return this.getAllDtos(forceRefresh).pipe(map((response) => response.map(mapCategoryDtoToListItem)));
+    return this.getAllDtos(forceRefresh).pipe(
+      map((response) => response.map(mapCategoryDtoToListItem)),
+    );
   }
 
-  public getById(categoryId: number | string): Observable<CategoriesDto> {
+  public getById(categoryId: number): Observable<CategoriesDto | null> {
     return this.apiClient.invoke(v1CategoriesGetCategoryIdGet, { categoryId });
   }
 
   public add(category: CategoriesDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(v1CategoriesAddPost, { body: category }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1CategoriesAddPost, { body: category })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(category: CategoriesDto): Observable<void> {
     return this.apiClient.invoke(v1CategoriesUpdatePut, { body: category }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(categoryId: number | string): Observable<void> {
+  public delete(categoryId: number): Observable<void> {
     return this.apiClient.invoke(v1CategoriesDeleteCategoryIdDelete, { categoryId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

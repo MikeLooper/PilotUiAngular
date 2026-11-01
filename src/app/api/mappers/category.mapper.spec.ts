@@ -9,14 +9,6 @@ describe('mapCategoryDtoToListItem', () => {
     expect(result).toEqual({ id: 1, name: 'Beverages', description: 'Soft drinks' });
   });
 
-  it('converts a string id into a number', () => {
-    const dto = { categoryId: '7', categoryName: 'Produce' };
-
-    const result = mapCategoryDtoToListItem(dto);
-
-    expect(result.id).toBe(7);
-  });
-
   it('trims surrounding whitespace from the name and description', () => {
     const dto = { categoryId: 2, categoryName: '  Condiments ', description: ' Sauces  ' };
 

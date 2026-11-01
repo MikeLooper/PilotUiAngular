@@ -8,10 +8,10 @@ export class OrdersResourceService extends CrudResourceStateService<OrdersDto> {
   public constructor(ordersApiFacade: OrdersApiFacade) {
     super('Orders', {
       loadAll: () => ordersApiFacade.getAll(true),
-      getById: (id) => ordersApiFacade.getById(id),
+      getById: (id) => ordersApiFacade.getById(Number(id)),
       add: (dto) => ordersApiFacade.add(dto),
       update: (dto) => ordersApiFacade.update(dto),
-      delete: (id) => ordersApiFacade.delete(id),
+      delete: (id) => ordersApiFacade.delete(Number(id)),
     });
   }
 }

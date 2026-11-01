@@ -15,7 +15,7 @@ export interface DataConnectionConfiguration {
   /**
    * Gets or sets the connection timeout in seconds. A value of 0 indicates no timeout.
    */
-  connectTimeout?: (number | string);
+  connectTimeout?: number;
 
   /**
    * Gets or sets the name of the related data source settings section.
@@ -31,5 +31,5 @@ export interface DataConnectionConfiguration {
   /**
    * Gets or sets the data source port number. A value of null indicates the default port for the specified data source type.
    */
-  port?: (number | string | null);
+  port?: (number | null);
 }

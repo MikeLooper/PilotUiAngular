@@ -27,7 +27,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.shippersApiFacade.getById(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.shippersApiFacade.getById(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected createSampleDto(): ShippersDto {
@@ -39,7 +39,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
 
   protected updateSampleDto(primaryId?: string): ShippersDto {
     return {
-      shipperId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      shipperId: this.asNumericId(primaryId, this.defaultPrimaryId),
       companyName: 'Updated Shipper',
       phone: '555-0111',
     };
@@ -54,7 +54,7 @@ export class ShippersResourceVmFacade extends BaseResourceCrudVmFacade<ShippersD
   }
 
   protected deleteDto(primaryId: string) {
-    return this.shippersApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.shippersApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: ShippersDto): ResourceRecord {

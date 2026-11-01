@@ -17,7 +17,7 @@ export class OrderDetailsApiFacade extends BaseResourceApiFacade<OrderDetailsDto
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(productId: number | string, orderId: number | string): Observable<OrderDetailsDto> {
+  public getById(productId: number, orderId: number): Observable<OrderDetailsDto | null> {
     return this.apiClient.invoke(v1OrderDetailsGetProductProductIdOrderOrderIdGet, {
       productId,
       orderId,
@@ -25,26 +25,28 @@ export class OrderDetailsApiFacade extends BaseResourceApiFacade<OrderDetailsDto
   }
 
   public add(orderDetail: OrderDetailsDto): Observable<AddResponseOrderDetails> {
-    return this.apiClient.invoke(v1OrderDetailsAddPost, { body: orderDetail }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1OrderDetailsAddPost, { body: orderDetail })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(orderDetail: OrderDetailsDto): Observable<void> {
     return this.apiClient.invoke(v1OrderDetailsUpdatePut, { body: orderDetail }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(productId: number | string, orderId: number | string): Observable<void> {
-    return this.apiClient.invoke(v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete, {
-      productId,
-      orderId,
-    }).pipe(
-      tap(() => this.clearCache()),
-      map(() => undefined)
-    );
+  public delete(productId: number, orderId: number): Observable<void> {
+    return this.apiClient
+      .invoke(v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete, {
+        productId,
+        orderId,
+      })
+      .pipe(
+        tap(() => this.clearCache()),
+        map(() => undefined),
+      );
   }
 
   protected fetchAll(): Observable<readonly OrderDetailsDto[]> {

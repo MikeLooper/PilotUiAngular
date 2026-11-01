@@ -28,7 +28,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.categoriesApiFacade.getById(this.asNumberishId(primaryId, '1'));
+    return this.categoriesApiFacade.getById(this.asNumericId(primaryId, '1'));
   }
 
   protected createSampleDto(): CategoriesDto {
@@ -41,7 +41,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
 
   protected updateSampleDto(primaryId?: string): CategoriesDto {
     return {
-      categoryId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      categoryId: this.asNumericId(primaryId, this.defaultPrimaryId),
       categoryName: 'Updated name',
       description: 'Updated from Categories resource page',
       picture: null,
@@ -57,7 +57,7 @@ export class CategoriesResourceVmFacade extends BaseResourceCrudVmFacade<Categor
   }
 
   protected deleteDto(primaryId: string) {
-    return this.categoriesApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.categoriesApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: CategoriesDto): ResourceRecord {

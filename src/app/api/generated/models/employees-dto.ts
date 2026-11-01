@@ -10,7 +10,7 @@ export interface EmployeesDto {
   birthDate?: (string | null);
   city?: (string | null);
   country?: (string | null);
-  employeeId?: (number | string | null);
+  employeeId?: (number | null);
   extension?: (string | null);
   firstName: string;
 
@@ -29,7 +29,7 @@ export interface EmployeesDto {
   /**
    * The employeeId of this employee's manager.
    */
-  reportsTo?: (number | string | null);
+  reportsTo?: (number | null);
   title?: (string | null);
   titleOfCourtesy?: (string | null);
 }

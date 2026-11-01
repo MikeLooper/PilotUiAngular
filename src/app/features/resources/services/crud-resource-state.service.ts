@@ -4,7 +4,7 @@ import { initialResourcePanelState, ResourcePanelState } from './resource-panel-
 
 interface CrudResourceOperations<TDto> {
   readonly loadAll: () => Observable<readonly TDto[]>;
-  readonly getById: (id: number | string, secondId?: number | string) => Observable<TDto>;
+  readonly getById: (id: number | string, secondId?: number | string) => Observable<TDto | null>;
   readonly add: (dto: TDto) => Observable<unknown>;
   readonly update: (dto: TDto) => Observable<unknown>;
   readonly delete: (id: number | string, secondId?: number | string) => Observable<unknown>;
@@ -15,7 +15,7 @@ export class CrudResourceStateService<TDto> {
 
   public constructor(
     private readonly resourceName: string,
-    private readonly operations: CrudResourceOperations<TDto>
+    private readonly operations: CrudResourceOperations<TDto>,
   ) {}
 
   public loadAll(): void {

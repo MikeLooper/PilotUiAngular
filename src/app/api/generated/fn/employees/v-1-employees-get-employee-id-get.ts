@@ -10,7 +10,7 @@ import { RequestBuilder } from '../../request-builder';
 import { EmployeesDto } from '../../models/employees-dto';
 
 export interface V1EmployeesGetEmployeeIdGet$Params {
-  employeeId: (number | string);
+  employeeId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

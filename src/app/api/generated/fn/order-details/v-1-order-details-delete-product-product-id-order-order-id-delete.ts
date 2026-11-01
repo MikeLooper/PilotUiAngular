@@ -9,8 +9,8 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface V1OrderDetailsDeleteProductProductIdOrderOrderIdDelete$Params {
-  productId: (number | string);
-  orderId: (number | string);
+  productId: number;
+  orderId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.
@@ -18,7 +18,7 @@ export interface V1OrderDetailsDeleteProductProductIdOrderOrderIdDelete$Params {
   'X-Correlation-Id'?: string;
 }
 
-export function v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete(http: HttpClient, rootUrl: string, params: V1OrderDetailsDeleteProductProductIdOrderOrderIdDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete(http: HttpClient, rootUrl: string, params: V1OrderDetailsDeleteProductProductIdOrderOrderIdDelete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete.PATH, 'delete');
   if (params) {
     rb.path('productId', params.productId, {});
@@ -27,11 +27,11 @@ export function v1OrderDetailsDeleteProductProductIdOrderOrderIdDelete(http: Htt
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }

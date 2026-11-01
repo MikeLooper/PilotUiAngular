@@ -16,7 +16,6 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
       defaultPrimaryId: '1',
       pageDefaults: {
         initialPrimaryId: '1',
-        initialSearchTerm: 'chai',
         pageSize: 10,
         autoLoadOnEnter: true,
       },
@@ -28,7 +27,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.productsApiFacade.getById(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.productsApiFacade.getById(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected createSampleDto(): ProductsDto {
@@ -44,7 +43,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
 
   protected updateSampleDto(primaryId?: string): ProductsDto {
     return {
-      productId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      productId: this.asNumericId(primaryId, this.defaultPrimaryId),
       productName: 'Updated Product',
       unitPrice: 21.49,
       unitsInStock: 18,
@@ -63,7 +62,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
   }
 
   protected deleteDto(primaryId: string) {
-    return this.productsApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.productsApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: ProductsDto): ResourceRecord {
@@ -100,7 +99,7 @@ export class ProductsResourceVmFacade extends BaseResourceCrudVmFacade<ProductsD
             product.reorderLevel,
             product.discontinued,
           ],
-        ]
+        ],
       ),
     ];
   }
