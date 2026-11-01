@@ -10,7 +10,7 @@ import { RequestBuilder } from '../../request-builder';
 import { SuppliersDto } from '../../models/suppliers-dto';
 
 export interface V1SuppliersGetSupplierIdGet$Params {
-  supplierId: (number | string);
+  supplierId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

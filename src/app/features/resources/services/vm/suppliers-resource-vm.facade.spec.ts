@@ -60,12 +60,12 @@ describe('SuppliersResourceVmFacade', () => {
   });
 
   describe('pageDefaults', () => {
-    it('starts with ten suppliers per page filtered by "exotic"', () => {
+    it('starts with ten suppliers per page with no search filter', () => {
       const pageDefaults = facade.pageDefaults;
 
       expect(pageDefaults).toMatchObject({
         initialPrimaryId: '1',
-        initialSearchTerm: 'exotic',
+        initialSearchTerm: '',
         pageSize: 10,
         autoLoadOnEnter: true,
       });

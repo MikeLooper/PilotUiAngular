@@ -27,7 +27,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.employeesApiFacade.getById(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.employeesApiFacade.getById(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected createSampleDto(): EmployeesDto {
@@ -42,7 +42,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
 
   protected updateSampleDto(primaryId?: string): EmployeesDto {
     return {
-      employeeId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      employeeId: this.asNumericId(primaryId, this.defaultPrimaryId),
       firstName: 'Updated',
       lastName: 'Employee',
       title: 'Senior Representative',
@@ -60,7 +60,7 @@ export class EmployeesResourceVmFacade extends BaseResourceCrudVmFacade<Employee
   }
 
   protected deleteDto(primaryId: string) {
-    return this.employeesApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.employeesApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: EmployeesDto): ResourceRecord {

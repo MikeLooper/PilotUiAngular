@@ -16,7 +16,6 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
       defaultPrimaryId: 'ALFKI',
       pageDefaults: {
         initialPrimaryId: 'ALFKI',
-        initialSearchTerm: 'alf',
         pageSize: 10,
         autoLoadOnEnter: true,
       },
@@ -67,7 +66,8 @@ export class CustomersResourceVmFacade extends BaseResourceCrudVmFacade<Customer
     return {
       primaryId: String(dto.customerId ?? ''),
       title: dto.companyName?.trim() || 'Unnamed customer',
-      subtitle: [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
+      subtitle:
+        [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
     };
   }

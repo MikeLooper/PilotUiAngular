@@ -61,12 +61,12 @@ describe('ProductsResourceVmFacade', () => {
   });
 
   describe('pageDefaults', () => {
-    it('starts with ten products per page filtered by "chai"', () => {
+    it('starts with ten products per page with no search filter', () => {
       const pageDefaults = facade.pageDefaults;
 
       expect(pageDefaults).toMatchObject({
         initialPrimaryId: '1',
-        initialSearchTerm: 'chai',
+        initialSearchTerm: '',
         pageSize: 10,
         autoLoadOnEnter: true,
       });

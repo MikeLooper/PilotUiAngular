@@ -5,7 +5,7 @@ import { BaseResourceCrudVmFacade } from './base-resource-crud-vm.facade';
 import { ResourceDetailSection, ResourcePageDefaults, ResourceRecord } from './resource-vm.models';
 
 interface Gadget {
-  readonly id?: number | string;
+  readonly id?: number;
   readonly name: string;
   readonly note?: string;
 }
@@ -26,14 +26,12 @@ class TestCrudVmFacade extends BaseResourceCrudVmFacade<Gadget> {
 
   public readonly api = {
     loadAll: vi.fn<(forceRefresh: boolean) => Observable<readonly Gadget[]>>(() => of(GADGETS)),
-    getById: vi.fn<(id: number | string, secondaryId?: string) => Observable<Gadget>>(() =>
+    getById: vi.fn<(id: number, secondaryId?: string) => Observable<Gadget | null>>(() =>
       of(GADGETS[0]!),
     ),
     add: vi.fn<(dto: Gadget) => Observable<unknown>>(() => of({ id: 9 })),
     update: vi.fn<(dto: Gadget) => Observable<unknown>>(() => of(undefined)),
-    delete: vi.fn<(id: number | string, secondaryId?: string) => Observable<void>>(() =>
-      of(undefined),
-    ),
+    delete: vi.fn<(id: number, secondaryId?: string) => Observable<void>>(() => of(undefined)),
   };
 
   public constructor(metadata: TestMetadata = {}) {
@@ -52,8 +50,8 @@ class TestCrudVmFacade extends BaseResourceCrudVmFacade<Gadget> {
     return this.api.loadAll(forceRefresh);
   }
 
-  protected getByIdDto(primaryId: string, secondaryId?: string): Observable<Gadget> {
-    return this.api.getById(this.asNumberishId(primaryId, this.defaultPrimaryId), secondaryId);
+  protected getByIdDto(primaryId: string, secondaryId?: string): Observable<Gadget | null> {
+    return this.api.getById(this.asNumericId(primaryId, this.defaultPrimaryId), secondaryId);
   }
 
   protected createSampleDto(): Gadget {
@@ -61,7 +59,7 @@ class TestCrudVmFacade extends BaseResourceCrudVmFacade<Gadget> {
   }
 
   protected updateSampleDto(primaryId?: string): Gadget {
-    return { id: this.asNumberishId(primaryId, this.defaultPrimaryId), name: 'Updated gadget' };
+    return { id: this.asNumericId(primaryId, this.defaultPrimaryId), name: 'Updated gadget' };
   }
 
   protected addDto(dto: Gadget): Observable<unknown> {
@@ -73,7 +71,7 @@ class TestCrudVmFacade extends BaseResourceCrudVmFacade<Gadget> {
   }
 
   protected deleteDto(primaryId: string, secondaryId?: string): Observable<void> {
-    return this.api.delete(this.asNumberishId(primaryId, this.defaultPrimaryId), secondaryId);
+    return this.api.delete(this.asNumericId(primaryId, this.defaultPrimaryId), secondaryId);
   }
 
   protected mapDtoToRecord(dto: Gadget): ResourceRecord {
@@ -420,7 +418,7 @@ describe('BaseResourceCrudVmFacade', () => {
 
     it.each([
       { label: 'a numeric id as a number', input: '42', expected: 42 },
-      { label: 'a non-numeric id as a string', input: 'ALFKI', expected: 'ALFKI' },
+      { label: 'a non-numeric id as NaN', input: 'abc', expected: NaN },
       { label: 'the default id for an empty id', input: '', expected: 1 },
       { label: 'the default id for a whitespace id', input: '   ', expected: 1 },
     ])('passes $label', ({ input, expected }) => {
@@ -436,7 +434,7 @@ describe('BaseResourceCrudVmFacade', () => {
     });
 
     it('records a null response when the API returns no content', () => {
-      facade.api.getById.mockReturnValue(of(null as unknown as Gadget));
+      facade.api.getById.mockReturnValue(of(null));
 
       facade.fetchById('99');
 

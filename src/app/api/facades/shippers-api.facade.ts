@@ -17,27 +17,27 @@ export class ShippersApiFacade extends BaseResourceApiFacade<ShippersDto> {
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(shipperId: number | string): Observable<ShippersDto> {
+  public getById(shipperId: number): Observable<ShippersDto | null> {
     return this.apiClient.invoke(v1ShippersGetShipperIdGet, { shipperId });
   }
 
   public add(shipper: ShippersDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(v1ShippersAddPost, { body: shipper }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1ShippersAddPost, { body: shipper })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(shipper: ShippersDto): Observable<void> {
     return this.apiClient.invoke(v1ShippersUpdatePut, { body: shipper }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(shipperId: number | string): Observable<void> {
+  public delete(shipperId: number): Observable<void> {
     return this.apiClient.invoke(v1ShippersDeleteShipperIdDelete, { shipperId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

@@ -8,10 +8,10 @@ export class EmployeesResourceService extends CrudResourceStateService<Employees
   public constructor(employeesApiFacade: EmployeesApiFacade) {
     super('Employees', {
       loadAll: () => employeesApiFacade.getAll(true),
-      getById: (id) => employeesApiFacade.getById(id),
+      getById: (id) => employeesApiFacade.getById(Number(id)),
       add: (dto) => employeesApiFacade.add(dto),
       update: (dto) => employeesApiFacade.update(dto),
-      delete: (id) => employeesApiFacade.delete(id),
+      delete: (id) => employeesApiFacade.delete(Number(id)),
     });
   }
 }

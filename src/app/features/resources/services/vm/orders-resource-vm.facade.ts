@@ -27,7 +27,7 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.ordersApiFacade.getById(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.ordersApiFacade.getById(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected createSampleDto(): OrdersDto {
@@ -41,7 +41,7 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
 
   protected updateSampleDto(primaryId?: string): OrdersDto {
     return {
-      orderId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      orderId: this.asNumericId(primaryId, this.defaultPrimaryId),
       customerId: 'ALFKI',
       employeeId: 1,
       shipCity: 'Portland',
@@ -58,14 +58,15 @@ export class OrdersResourceVmFacade extends BaseResourceCrudVmFacade<OrdersDto> 
   }
 
   protected deleteDto(primaryId: string) {
-    return this.ordersApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.ordersApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: OrdersDto): ResourceRecord {
     return {
       primaryId: String(dto.orderId),
       title: `Order #${dto.orderId}`,
-      subtitle: [dto.customerId, dto.shipCity, dto.shipCountry].filter(Boolean).join(' • ') || 'No details',
+      subtitle:
+        [dto.customerId, dto.shipCity, dto.shipCountry].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
     };
   }

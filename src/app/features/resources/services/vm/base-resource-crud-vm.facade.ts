@@ -105,7 +105,7 @@ export abstract class BaseResourceCrudVmFacade<
   }
 
   protected abstract loadAllDtos(forceRefresh: boolean): Observable<readonly TDto[]>;
-  protected abstract getByIdDto(primaryId: string, secondaryId?: string): Observable<TDto>;
+  protected abstract getByIdDto(primaryId: string, secondaryId?: string): Observable<TDto | null>;
   protected abstract createSampleDto(): TDto;
   protected abstract updateSampleDto(primaryId?: string, secondaryId?: string): TDto;
   protected abstract addDto(dto: TDto): Observable<unknown>;
@@ -261,10 +261,9 @@ export abstract class BaseResourceCrudVmFacade<
     this.runOperation('update', payload, this.updateDto(payload as TDto));
   }
 
-  protected asNumberishId(value: string | undefined, fallback: string): number | string {
-    const resolved = value && value.trim().length > 0 ? value : fallback;
-    const numeric = Number(resolved);
-    return Number.isNaN(numeric) ? resolved : numeric;
+  /** Non-numeric input becomes NaN, which the API rejects with a 400 shown beside the request. */
+  protected asNumericId(value: string | undefined, fallback: string): number {
+    return Number(value && value.trim().length > 0 ? value : fallback);
   }
 
   protected createFieldsSection(

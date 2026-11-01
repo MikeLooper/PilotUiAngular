@@ -6,17 +6,17 @@ export interface OrderDetailsDto {
   /**
    * Discount as a fraction of the unit price (0 to 1). Database default is 0.
    */
-  discount: (number | string);
-  orderId: (number | string);
-  productId: (number | string);
+  discount: number;
+  orderId: number;
+  productId: number;
 
   /**
    * Database default is 1.
    */
-  quantity: (number | string);
+  quantity: number;
 
   /**
    * Database default is 0.
    */
-  unitPrice: (number | string);
+  unitPrice: number;
 }

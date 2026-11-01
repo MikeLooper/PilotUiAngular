@@ -19,9 +19,9 @@ describe('OrderDetailsResourceVmFacade', () => {
 
   /** OpenAPI ranges for order detail numbers: quantity >= 1 and 0 <= discount <= 1. */
   function expectWithinOpenApiRanges(dto: OrderDetailsDto): void {
-    expect(Number(dto.quantity)).toBeGreaterThanOrEqual(1);
-    expect(Number(dto.discount)).toBeGreaterThanOrEqual(0);
-    expect(Number(dto.discount)).toBeLessThanOrEqual(1);
+    expect(dto.quantity).toBeGreaterThanOrEqual(1);
+    expect(dto.discount).toBeGreaterThanOrEqual(0);
+    expect(dto.discount).toBeLessThanOrEqual(1);
   }
 
   beforeEach(() => {

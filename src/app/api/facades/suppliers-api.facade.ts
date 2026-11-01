@@ -17,27 +17,27 @@ export class SuppliersApiFacade extends BaseResourceApiFacade<SuppliersDto> {
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(supplierId: number | string): Observable<SuppliersDto> {
+  public getById(supplierId: number): Observable<SuppliersDto | null> {
     return this.apiClient.invoke(v1SuppliersGetSupplierIdGet, { supplierId });
   }
 
   public add(supplier: SuppliersDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(v1SuppliersAddPost, { body: supplier }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1SuppliersAddPost, { body: supplier })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(supplier: SuppliersDto): Observable<void> {
     return this.apiClient.invoke(v1SuppliersUpdatePut, { body: supplier }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(supplierId: number | string): Observable<void> {
+  public delete(supplierId: number): Observable<void> {
     return this.apiClient.invoke(v1SuppliersDeleteSupplierIdDelete, { supplierId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

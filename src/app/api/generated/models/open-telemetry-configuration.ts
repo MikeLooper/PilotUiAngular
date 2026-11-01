@@ -15,7 +15,7 @@ export interface OpenTelemetryConfiguration {
   /**
    * Gets or sets the OpenTelemetry Port.
    */
-  port?: (number | string | null);
+  port?: (number | null);
 
   /**
    * Gets or sets the OpenTelemetry Server.

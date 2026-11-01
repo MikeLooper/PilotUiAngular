@@ -8,10 +8,10 @@ export class ShippersResourceService extends CrudResourceStateService<ShippersDt
   public constructor(shippersApiFacade: ShippersApiFacade) {
     super('Shippers', {
       loadAll: () => shippersApiFacade.getAll(true),
-      getById: (id) => shippersApiFacade.getById(id),
+      getById: (id) => shippersApiFacade.getById(Number(id)),
       add: (dto) => shippersApiFacade.add(dto),
       update: (dto) => shippersApiFacade.update(dto),
-      delete: (id) => shippersApiFacade.delete(id),
+      delete: (id) => shippersApiFacade.delete(Number(id)),
     });
   }
 }

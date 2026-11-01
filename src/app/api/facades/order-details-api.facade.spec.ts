@@ -74,6 +74,16 @@ describe('OrderDetailsApiFacade', () => {
 
       expect(await result).toEqual([]);
     });
+
+    it('emits an empty list when the API responds with 204 No Content', async () => {
+      const result = lastValueFrom(facade.getAll());
+
+      httpMock
+        .expectOne({ method: 'GET', url: GET_ALL_URL })
+        .flush(null, { status: 204, statusText: 'No Content' });
+
+      expect(await result).toEqual([]);
+    });
   });
 
   describe('getById', () => {
@@ -95,6 +105,16 @@ describe('OrderDetailsApiFacade', () => {
         .flush(null, { status: 404, statusText: 'Not Found' });
 
       await expect(result).rejects.toMatchObject({ status: 404 });
+    });
+
+    it('emits null when the API responds with 204 No Content', async () => {
+      const result = lastValueFrom(facade.getById(1, 10248));
+
+      httpMock
+        .expectOne({ method: 'GET', url: `${RESOURCE_URL}/get/product/1/order/10248` })
+        .flush(null, { status: 204, statusText: 'No Content' });
+
+      expect(await result).toBeNull();
     });
   });
 
@@ -129,7 +149,7 @@ describe('OrderDetailsApiFacade', () => {
       const result = lastValueFrom(facade.update(ORDER_DETAIL));
 
       const request = httpMock.expectOne({ method: 'PUT', url: `${RESOURCE_URL}/update` });
-      request.flush({});
+      request.flush(null, { status: 204, statusText: 'No Content' });
 
       expect(request.request.body).toEqual(ORDER_DETAIL);
       expect(await result).toBeUndefined();
@@ -138,7 +158,9 @@ describe('OrderDetailsApiFacade', () => {
     it('clears the cached list', async () => {
       await primeCache();
       const updated = lastValueFrom(facade.update(ORDER_DETAIL));
-      httpMock.expectOne(`${RESOURCE_URL}/update`).flush({});
+      httpMock
+        .expectOne(`${RESOURCE_URL}/update`)
+        .flush(null, { status: 204, statusText: 'No Content' });
       await updated;
 
       const reloaded = lastValueFrom(facade.getAll());
@@ -154,7 +176,7 @@ describe('OrderDetailsApiFacade', () => {
 
       httpMock
         .expectOne({ method: 'DELETE', url: `${RESOURCE_URL}/delete/product/1/order/10248` })
-        .flush({});
+        .flush(null, { status: 204, statusText: 'No Content' });
 
       expect(await result).toBeUndefined();
     });
@@ -162,7 +184,9 @@ describe('OrderDetailsApiFacade', () => {
     it('clears the cached list', async () => {
       await primeCache();
       const deleted = lastValueFrom(facade.delete(1, 10248));
-      httpMock.expectOne(`${RESOURCE_URL}/delete/product/1/order/10248`).flush({});
+      httpMock
+        .expectOne(`${RESOURCE_URL}/delete/product/1/order/10248`)
+        .flush(null, { status: 204, statusText: 'No Content' });
       await deleted;
 
       const reloaded = lastValueFrom(facade.getAll());

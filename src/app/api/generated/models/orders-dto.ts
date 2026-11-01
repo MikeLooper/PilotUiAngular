@@ -3,18 +3,18 @@
 
 export interface OrdersDto {
   customerId?: (string | null);
-  employeeId?: (number | string | null);
+  employeeId?: (number | null);
 
   /**
    * Database default is 0.
    */
-  freight?: (number | string | null);
+  freight?: (number | null);
 
   /**
    * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
    */
   orderDate?: (string | null);
-  orderId?: (number | string | null);
+  orderId?: (number | null);
 
   /**
    * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).
@@ -30,7 +30,7 @@ export interface OrdersDto {
   /**
    * The shipperId of the shipper used for this order.
    */
-  shipVia?: (number | string | null);
+  shipVia?: (number | null);
 
   /**
    * Valid range is 1753-01-01 through 9999-12-31 (SQL Server DATETIME).

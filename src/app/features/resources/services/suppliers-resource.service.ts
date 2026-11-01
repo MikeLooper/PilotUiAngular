@@ -8,10 +8,10 @@ export class SuppliersResourceService extends CrudResourceStateService<Suppliers
   public constructor(suppliersApiFacade: SuppliersApiFacade) {
     super('Suppliers', {
       loadAll: () => suppliersApiFacade.getAll(true),
-      getById: (id) => suppliersApiFacade.getById(id),
+      getById: (id) => suppliersApiFacade.getById(Number(id)),
       add: (dto) => suppliersApiFacade.add(dto),
       update: (dto) => suppliersApiFacade.update(dto),
-      delete: (id) => suppliersApiFacade.delete(id),
+      delete: (id) => suppliersApiFacade.delete(Number(id)),
     });
   }
 }

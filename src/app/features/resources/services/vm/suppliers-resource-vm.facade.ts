@@ -16,7 +16,6 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
       defaultPrimaryId: '1',
       pageDefaults: {
         initialPrimaryId: '1',
-        initialSearchTerm: 'exotic',
         pageSize: 10,
         autoLoadOnEnter: true,
       },
@@ -28,7 +27,7 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
   }
 
   protected getByIdDto(primaryId: string) {
-    return this.suppliersApiFacade.getById(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.suppliersApiFacade.getById(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected createSampleDto(): SuppliersDto {
@@ -42,7 +41,7 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
 
   protected updateSampleDto(primaryId?: string): SuppliersDto {
     return {
-      supplierId: this.asNumberishId(primaryId, this.defaultPrimaryId),
+      supplierId: this.asNumericId(primaryId, this.defaultPrimaryId),
       companyName: 'Updated Supplier',
       contactName: 'Updated Contact',
       city: 'Portland',
@@ -59,14 +58,15 @@ export class SuppliersResourceVmFacade extends BaseResourceCrudVmFacade<Supplier
   }
 
   protected deleteDto(primaryId: string) {
-    return this.suppliersApiFacade.delete(this.asNumberishId(primaryId, this.defaultPrimaryId));
+    return this.suppliersApiFacade.delete(this.asNumericId(primaryId, this.defaultPrimaryId));
   }
 
   protected mapDtoToRecord(dto: SuppliersDto): ResourceRecord {
     return {
       primaryId: String(dto.supplierId),
       title: dto.companyName?.trim() || `Supplier #${dto.supplierId}`,
-      subtitle: [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
+      subtitle:
+        [dto.contactName, dto.city, dto.country].filter(Boolean).join(' • ') || 'No details',
       raw: dto,
     };
   }

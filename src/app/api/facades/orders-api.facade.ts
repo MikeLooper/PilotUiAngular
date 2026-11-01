@@ -17,27 +17,27 @@ export class OrdersApiFacade extends BaseResourceApiFacade<OrdersDto> {
     return this.getAllCached(forceRefresh);
   }
 
-  public getById(orderId: number | string): Observable<OrdersDto> {
+  public getById(orderId: number): Observable<OrdersDto | null> {
     return this.apiClient.invoke(v1OrdersGetOrderIdGet, { orderId });
   }
 
   public add(order: OrdersDto): Observable<AddResponseInt> {
-    return this.apiClient.invoke(v1OrdersAddPost, { body: order }).pipe(
-      tap(() => this.clearCache())
-    );
+    return this.apiClient
+      .invoke(v1OrdersAddPost, { body: order })
+      .pipe(tap(() => this.clearCache()));
   }
 
   public update(order: OrdersDto): Observable<void> {
     return this.apiClient.invoke(v1OrdersUpdatePut, { body: order }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 
-  public delete(orderId: number | string): Observable<void> {
+  public delete(orderId: number): Observable<void> {
     return this.apiClient.invoke(v1OrdersDeleteOrderIdDelete, { orderId }).pipe(
       tap(() => this.clearCache()),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 

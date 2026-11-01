@@ -14,12 +14,12 @@ export interface V1SuppliersGetAllGet$Params {
 /**
  * The number of the page (within a dataset) to start with during data retrieval.
  */
-  page?: (number | string);
+  page?: number;
 
 /**
  * The number of items to return during data retrieval.
  */
-  pageSize?: (number | string);
+  pageSize?: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

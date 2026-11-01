@@ -31,8 +31,8 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected getByIdDto(primaryId: string, secondaryId?: string) {
     return this.orderDetailsApiFacade.getById(
-      this.asNumberishId(primaryId, this.defaultPrimaryId),
-      this.asNumberishId(secondaryId, this.defaultSecondaryId || '10248')
+      this.asNumericId(primaryId, this.defaultPrimaryId),
+      this.asNumericId(secondaryId, this.defaultSecondaryId || '10248'),
     );
   }
 
@@ -48,8 +48,8 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected updateSampleDto(primaryId?: string, secondaryId?: string): OrderDetailsDto {
     return {
-      productId: this.asNumberishId(primaryId, this.defaultPrimaryId),
-      orderId: this.asNumberishId(secondaryId, this.defaultSecondaryId || '10248'),
+      productId: this.asNumericId(primaryId, this.defaultPrimaryId),
+      orderId: this.asNumericId(secondaryId, this.defaultSecondaryId || '10248'),
       unitPrice: 18,
       quantity: 12,
       discount: 0.1,
@@ -66,8 +66,8 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
 
   protected deleteDto(primaryId: string, secondaryId?: string) {
     return this.orderDetailsApiFacade.delete(
-      this.asNumberishId(primaryId, this.defaultPrimaryId),
-      this.asNumberishId(secondaryId, this.defaultSecondaryId || '10248')
+      this.asNumericId(primaryId, this.defaultPrimaryId),
+      this.asNumericId(secondaryId, this.defaultSecondaryId || '10248'),
     );
   }
 
@@ -88,7 +88,7 @@ export class OrderDetailsResourceVmFacade extends BaseResourceCrudVmFacade<Order
       this.createTableSection(
         'Line item metrics',
         ['Order ID', 'Product ID', 'Unit price', 'Quantity', 'Discount'],
-        [[detail.orderId, detail.productId, detail.unitPrice, detail.quantity, detail.discount]]
+        [[detail.orderId, detail.productId, detail.unitPrice, detail.quantity, detail.discount]],
       ),
     ];
   }

@@ -10,8 +10,8 @@ import { RequestBuilder } from '../../request-builder';
 import { OrderDetailsDto } from '../../models/order-details-dto';
 
 export interface V1OrderDetailsGetProductProductIdOrderOrderIdGet$Params {
-  productId: (number | string);
-  orderId: (number | string);
+  productId: number;
+  orderId: number;
 
 /**
  * Unique identifier used for tracing a transaction across microservices.

@@ -1,5 +1,5 @@
 import { effect, inject } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, map, shareReplay } from 'rxjs';
 import { DataSourceService } from '../../core/services/data-source';
 import { ApiClient } from '../generated';
 
@@ -13,12 +13,14 @@ export abstract class BaseResourceApiFacade<TItem> {
 
   private cachedAll$?: Observable<readonly TItem[]>;
 
-  protected abstract fetchAll(): Observable<readonly TItem[]>;
+  /** Emits null when the API answers 204 No Content, which the generated client does not type. */
+  protected abstract fetchAll(): Observable<readonly TItem[] | null>;
 
   protected getAllCached(forceRefresh = false): Observable<readonly TItem[]> {
     if (forceRefresh || !this.cachedAll$) {
       this.cachedAll$ = this.fetchAll().pipe(
-        shareReplay({ bufferSize: 1, refCount: true })
+        map((items) => items ?? []),
+        shareReplay({ bufferSize: 1, refCount: true }),
       );
     }
 
