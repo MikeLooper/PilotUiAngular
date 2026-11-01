@@ -35,13 +35,13 @@ describe('correlationIdInterceptor', () => {
     vi.unstubAllGlobals();
   });
 
-  it.each([DOMAIN_URL, SYSTEM_URL])('adds a new GUID to target API request %s', (url) => {
+  it('adds a new GUID to a non-system target API request', () => {
     vi.spyOn(crypto, 'randomUUID').mockReturnValue(FIRST_ID);
 
-    http.get(url).subscribe();
+    http.get(DOMAIN_URL).subscribe();
 
-    const request = httpMock.expectOne(url);
-    request.flush({});
+    const request = httpMock.expectOne(DOMAIN_URL);
+    request.flush([]);
     expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
   });
 
@@ -80,10 +80,14 @@ describe('correlationIdInterceptor', () => {
     expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
   });
 
-  it('does not add the header to non-target-API requests', () => {
-    http.get(NON_TARGET_URL).subscribe();
+  it.each([
+    SYSTEM_URL,
+    '/api/11201/healthcheck',
+    NON_TARGET_URL,
+  ])('does not add the header to request %s', (url) => {
+    http.get(url).subscribe();
 
-    const request = httpMock.expectOne(NON_TARGET_URL);
+    const request = httpMock.expectOne(url);
     request.flush({});
     expect(request.request.headers.has(CORRELATION_ID_HEADER)).toBe(false);
   });
