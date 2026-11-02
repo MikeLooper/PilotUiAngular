@@ -11,12 +11,24 @@ import { AboutResponse } from '../../models/about-response';
 
 export interface AboutGet$Params {
   'show-details'?: boolean;
+
+/**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
+ * Unique identifier used for tracing a transaction across microservices.
+ */
+  'X-Correlation-Id'?: string;
 }
 
 export function aboutGet(http: HttpClient, rootUrl: string, params?: AboutGet$Params, context?: HttpContext): Observable<StrictHttpResponse<AboutResponse>> {
   const rb = new RequestBuilder(rootUrl, aboutGet.PATH, 'get');
   if (params) {
     rb.query('show-details', params['show-details'], {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
+    rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 
   return http.request(

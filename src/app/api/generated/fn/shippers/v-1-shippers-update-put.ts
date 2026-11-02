@@ -12,6 +12,11 @@ import { ShippersDto } from '../../models/shippers-dto';
 export interface V1ShippersUpdatePut$Params {
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -21,6 +26,7 @@ export interface V1ShippersUpdatePut$Params {
 export function v1ShippersUpdatePut(http: HttpClient, rootUrl: string, params: V1ShippersUpdatePut$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, v1ShippersUpdatePut.PATH, 'put');
   if (params) {
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
     rb.body(params.body, 'application/*+json');
   }

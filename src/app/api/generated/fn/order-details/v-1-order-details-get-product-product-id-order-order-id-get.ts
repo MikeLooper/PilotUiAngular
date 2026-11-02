@@ -14,6 +14,11 @@ export interface V1OrderDetailsGetProductProductIdOrderOrderIdGet$Params {
   orderId: number;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -24,6 +29,7 @@ export function v1OrderDetailsGetProductProductIdOrderOrderIdGet(http: HttpClien
   if (params) {
     rb.path('productId', params.productId, {});
     rb.path('orderId', params.orderId, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 

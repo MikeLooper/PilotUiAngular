@@ -13,6 +13,11 @@ import { ProductsDto } from '../../models/products-dto';
 export interface V1ProductsAddPost$Params {
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -22,6 +27,7 @@ export interface V1ProductsAddPost$Params {
 export function v1ProductsAddPost(http: HttpClient, rootUrl: string, params: V1ProductsAddPost$Params, context?: HttpContext): Observable<StrictHttpResponse<AddResponseInt>> {
   const rb = new RequestBuilder(rootUrl, v1ProductsAddPost.PATH, 'post');
   if (params) {
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
     rb.body(params.body, 'application/*+json');
   }

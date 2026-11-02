@@ -7,7 +7,9 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAppEnvironment } from './core/config/app-config';
 import { GlobalErrorHandler } from './core/errors/global-error-handler';
+import { apiLoggingInterceptor } from './core/interceptors/api-logging-interceptor';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
+import { callerNameInterceptor } from './core/interceptors/caller-name-interceptor';
 import { correlationIdInterceptor } from './core/interceptors/correlation-id-interceptor';
 import { errorHandlingInterceptor } from './core/interceptors/error-handling-interceptor';
 import { loadingInterceptor } from './core/interceptors/loading-interceptor';
@@ -24,9 +26,11 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([
         authInterceptor,
         correlationIdInterceptor,
+        callerNameInterceptor,
         securityTokenInterceptor,
         loadingInterceptor,
         errorHandlingInterceptor,
+        apiLoggingInterceptor,
       ])
     ),
     provideAppEnvironment(environment),

@@ -12,6 +12,11 @@ export interface V1EmployeesDeleteEmployeeIdDelete$Params {
   employeeId: number;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -21,6 +26,7 @@ export function v1EmployeesDeleteEmployeeIdDelete(http: HttpClient, rootUrl: str
   const rb = new RequestBuilder(rootUrl, v1EmployeesDeleteEmployeeIdDelete.PATH, 'delete');
   if (params) {
     rb.path('employeeId', params.employeeId, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 

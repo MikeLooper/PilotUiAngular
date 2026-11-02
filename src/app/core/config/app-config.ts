@@ -38,6 +38,8 @@ export interface AppEnvironment {
   readonly apiBaseUrl: string;
   readonly sourceApiConnections: SourceApiConnections;
   readonly requestTimeoutMs: number;
+  /** Sent to the target APIs in the X-Caller-Name header (OpenAPI CallerNameHeader, max 100 chars). */
+  readonly callerName: string;
   readonly securityToken: SecurityTokenConfig;
 }
 

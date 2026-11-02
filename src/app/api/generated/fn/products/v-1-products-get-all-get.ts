@@ -22,6 +22,11 @@ export interface V1ProductsGetAllGet$Params {
   pageSize?: number;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -32,6 +37,7 @@ export function v1ProductsGetAllGet(http: HttpClient, rootUrl: string, params?: 
   if (params) {
     rb.query('page', params.page, {});
     rb.query('pageSize', params.pageSize, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 
