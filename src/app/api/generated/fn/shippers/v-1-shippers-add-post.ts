@@ -13,6 +13,11 @@ import { ShippersDto } from '../../models/shippers-dto';
 export interface V1ShippersAddPost$Params {
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -22,6 +27,7 @@ export interface V1ShippersAddPost$Params {
 export function v1ShippersAddPost(http: HttpClient, rootUrl: string, params: V1ShippersAddPost$Params, context?: HttpContext): Observable<StrictHttpResponse<AddResponseInt>> {
   const rb = new RequestBuilder(rootUrl, v1ShippersAddPost.PATH, 'post');
   if (params) {
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
     rb.body(params.body, 'application/*+json');
   }

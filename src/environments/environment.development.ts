@@ -6,6 +6,7 @@ export const environment: AppEnvironment = {
   apiBaseUrl: '/api',
   sourceApiConnections,
   requestTimeoutMs: 15000,
+  callerName: 'PilotUiAngular',
   securityToken: {
     active: true,
     // Relative path proxied to Keycloak by proxy.conf.json, so the browser's token

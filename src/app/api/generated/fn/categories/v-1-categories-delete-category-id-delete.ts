@@ -12,6 +12,11 @@ export interface V1CategoriesDeleteCategoryIdDelete$Params {
   categoryId: number;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -21,6 +26,7 @@ export function v1CategoriesDeleteCategoryIdDelete(http: HttpClient, rootUrl: st
   const rb = new RequestBuilder(rootUrl, v1CategoriesDeleteCategoryIdDelete.PATH, 'delete');
   if (params) {
     rb.path('categoryId', params.categoryId, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 

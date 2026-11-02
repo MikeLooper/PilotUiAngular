@@ -8,6 +8,7 @@ import { CORRELATION_ID_HEADER, correlationIdInterceptor } from './correlation-i
 
 const DOMAIN_URL = '/api/11201/v1/categories/get-all';
 const SYSTEM_URL = '/api/11201/about';
+const HEALTHCHECK_URL = '/api/11201/healthcheck';
 const NON_TARGET_URL = '/idp/realms/local-realm/protocol/openid-connect/token';
 const FIRST_ID = '11111111-1111-4111-8111-111111111111';
 const SECOND_ID = '22222222-2222-4222-8222-222222222222';
@@ -35,15 +36,18 @@ describe('correlationIdInterceptor', () => {
     vi.unstubAllGlobals();
   });
 
-  it('adds a new GUID to a non-system target API request', () => {
-    vi.spyOn(crypto, 'randomUUID').mockReturnValue(FIRST_ID);
+  it.each([DOMAIN_URL, SYSTEM_URL, HEALTHCHECK_URL])(
+    'adds a new GUID to the target API request %s',
+    (url) => {
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(FIRST_ID);
 
-    http.get(DOMAIN_URL).subscribe();
+      http.get(url).subscribe();
 
-    const request = httpMock.expectOne(DOMAIN_URL);
-    request.flush([]);
-    expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
-  });
+      const request = httpMock.expectOne(url);
+      request.flush({});
+      expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
+    },
+  );
 
   it('generates a separate GUID for each request', () => {
     vi.spyOn(crypto, 'randomUUID').mockReturnValueOnce(FIRST_ID).mockReturnValueOnce(SECOND_ID);
@@ -80,14 +84,10 @@ describe('correlationIdInterceptor', () => {
     expect(request.request.headers.get(CORRELATION_ID_HEADER)).toBe(FIRST_ID);
   });
 
-  it.each([
-    SYSTEM_URL,
-    '/api/11201/healthcheck',
-    NON_TARGET_URL,
-  ])('does not add the header to request %s', (url) => {
-    http.get(url).subscribe();
+  it('does not add the header to a non-target request', () => {
+    http.get(NON_TARGET_URL).subscribe();
 
-    const request = httpMock.expectOne(url);
+    const request = httpMock.expectOne(NON_TARGET_URL);
     request.flush({});
     expect(request.request.headers.has(CORRELATION_ID_HEADER)).toBe(false);
   });

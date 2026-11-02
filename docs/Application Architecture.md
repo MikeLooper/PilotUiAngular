@@ -50,13 +50,32 @@ All top-level routes are guarded with `authGuard` to keep navigation policy cent
 
 ### Interceptor Chain
 
-Interceptors are configured in a specific order:
+Interceptors are configured in a specific order (the first is outermost):
 
-1. `authInterceptor`
-2. `loadingInterceptor`
-3. `errorHandlingInterceptor`
+1. `authInterceptor` - adds `X-Requested-With: XMLHttpRequest` to every request.
+2. `correlationIdInterceptor` - adds `X-Correlation-Id` (a new GUID unless the caller supplied a valid one) to every target API request, domain and system (`/about`, `/healthcheck`) alike.
+3. `callerNameInterceptor` - adds `X-Caller-Name` (from `AppEnvironment.callerName`, default `PilotUiAngular`, max 100 characters) to every target API request.
+4. `securityTokenInterceptor` - adds the bearer token to domain (`/v1/`) requests only.
+5. `loadingInterceptor` - drives the global loading indicator.
+6. `errorHandlingInterceptor` - maps transport failures to `ApiClientError`.
+7. `apiLoggingInterceptor` - logs the beginning and end of every target API call.
 
-This keeps token concerns, UI loading state, and transport/domain error translation separated.
+This keeps header concerns, token concerns, UI loading state, transport/domain error translation, and call logging separated.
+
+The `X-Api-Version` header is excluded from the generated client (`excludeParameters` in `ng-openapi-gen.json`) and is not sent, so the API uses its default version.
+
+### API Call Logging
+
+`apiLoggingInterceptor` writes through `LoggerService`:
+
+| Event | Level | Message |
+| --- | --- | --- |
+| Call sent | info | `API call started: <METHOD> <url>` |
+| HTTP response received | info | `API call completed: <METHOD> <url>` |
+| HTTP or transport failure | error | `API call failed: <METHOD> <url>` |
+| Unsubscribed before a response (e.g. `switchMap`) | warn | `API call cancelled: <METHOD> <url>` |
+
+Every entry carries `requestId`, `correlationId`, `callerName`, `method`, and `url`; end entries also carry `status` (`null` when there is no HTTP response), `durationMs`, and, on failure, the `error`. The `requestId` is a GUID generated per HTTP call and is only used for logging (it is not part of the OpenAPI spec and is not sent), so it distinguishes calls that share a caller-supplied correlation id. The interceptor is registered last so it sees the headers as sent (after the token has been fetched) and the raw `HttpErrorResponse`.
 
 ## API Layer Design
 

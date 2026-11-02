@@ -13,6 +13,11 @@ export interface V1SuppliersGetSupplierIdGet$Params {
   supplierId: number;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -22,6 +27,7 @@ export function v1SuppliersGetSupplierIdGet(http: HttpClient, rootUrl: string, p
   const rb = new RequestBuilder(rootUrl, v1SuppliersGetSupplierIdGet.PATH, 'get');
   if (params) {
     rb.path('supplierId', params.supplierId, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 

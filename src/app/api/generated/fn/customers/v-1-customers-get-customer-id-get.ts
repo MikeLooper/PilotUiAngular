@@ -13,6 +13,11 @@ export interface V1CustomersGetCustomerIdGet$Params {
   customerId: string;
 
 /**
+ * Name of the caller.
+ */
+  'X-Caller-Name'?: string;
+
+/**
  * Unique identifier used for tracing a transaction across microservices.
  */
   'X-Correlation-Id'?: string;
@@ -22,6 +27,7 @@ export function v1CustomersGetCustomerIdGet(http: HttpClient, rootUrl: string, p
   const rb = new RequestBuilder(rootUrl, v1CustomersGetCustomerIdGet.PATH, 'get');
   if (params) {
     rb.path('customerId', params.customerId, {});
+    rb.header('X-Caller-Name', params['X-Caller-Name'], {});
     rb.header('X-Correlation-Id', params['X-Correlation-Id'], {});
   }
 

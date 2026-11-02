@@ -7,6 +7,7 @@ export const environment: AppEnvironment = {
   apiBaseUrl: '/api',
   sourceApiConnections,
   requestTimeoutMs: 15000,
+  callerName: 'PilotUiAngular',
   securityToken: {
     active: true,
     // Resolved on the pilot-net Docker network, alongside the API containers.
