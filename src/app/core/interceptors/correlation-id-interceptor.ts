@@ -1,22 +1,26 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { APP_ENV } from '../config/app-config';
-import { isTargetApiUrl } from './domain-request';
+import { isDomainApiUrl, isTargetApiUrl } from './domain-request';
 
 export const CORRELATION_ID_HEADER = 'X-Correlation-Id';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Ensures every target API request (domain and system) carries a valid
- * X-Correlation-Id (UUID), as defined by the OpenAPI spec's CorrelationIdHeader
- * parameter. A valid value supplied by the caller is kept; a missing or
- * malformed one is replaced with a new GUID.
+ * Ensures every non-system target API request carries a valid X-Correlation-Id
+ * (UUID), as defined by the OpenAPI spec's CorrelationIdHeader parameter, which
+ * About/Healthcheck do not declare. A valid value supplied by the caller is kept;
+ * a missing or malformed one is replaced with a new GUID.
  */
 export const correlationIdInterceptor: HttpInterceptorFn = (req, next) => {
   const env = inject(APP_ENV);
 
-  if (!isTargetApiUrl(req.url, env) || UUID_PATTERN.test(req.headers.get(CORRELATION_ID_HEADER) ?? '')) {
+  if (
+    !isTargetApiUrl(req.url, env) ||
+    !isDomainApiUrl(req.url) ||
+    UUID_PATTERN.test(req.headers.get(CORRELATION_ID_HEADER) ?? '')
+  ) {
     return next(req);
   }
 

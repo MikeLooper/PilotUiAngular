@@ -130,12 +130,15 @@ Values include:
 - Unit tests for shared utilities/components and core services.
 - Facade-level tests for API mapping and feature state behavior.
 - Integration-style HTTP test for generated-client adapter using HttpTestingController.
+- End-to-end Playwright tests in tests/ (first-time setup: `npx playwright install chromium`).
 
 ## Scripts
 
 - npm start: start development server
 - npm run build:prod: production build
 - npm run test: run tests once
+- npm run test:e2e: run Playwright end-to-end tests against a mocked API (no backend needed)
+- npm run test:e2e:live: run read-only Playwright smoke tests against the running backend and IDP
 - npm run lint: lint workspace
 - npm run format: format code
 - npm run format:check: verify formatting
