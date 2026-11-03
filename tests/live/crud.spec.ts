@@ -369,7 +369,8 @@ async function deleteThroughUi(
     await fillIds(resourcePage.page, resource, record);
     await resourcePage.button('Delete').click();
     await expect(resourcePage.resultStatus).toHaveText('Succeeded (no content returned)', loaded);
-  } catch {
+  } catch (error) {
     console.warn(`Could not delete ${resource.key} record ${JSON.stringify(record)}.`);
+    throw error;
   }
 }
