@@ -19,9 +19,11 @@ export default defineConfig({
   projects: [
     // Runs against a stateful in-browser mock of the API; no backend or IDP is needed.
     { name: 'mocked', testDir: './e2e', use: { ...devices['Desktop Chrome'] } },
-    // Read-only checks against the real backend through the dev-server proxy. Select it with
-    // the test:e2e:live script, since it needs the backend and IDP running.
-    { name: 'live', testDir: './live', use: { ...devices['Desktop Chrome'] } },
+    // Checks against the real backend through the dev-server proxy; the CRUD tests delete every
+    // record they create. Select it with the test:e2e:live script, since it needs the backend and
+    // IDP running. The proxy now and then cuts off a large response, which leaves the page
+    // waiting, so each test gets one retry.
+    { name: 'live', testDir: './live', retries: 1, use: { ...devices['Desktop Chrome'] } },
   ],
   webServer: {
     command: `npm start -- --port ${port}`,
