@@ -138,7 +138,7 @@ Values include:
 - npm run build:prod: production build
 - npm run test: run tests once
 - npm run test:e2e: run Playwright end-to-end tests against a mocked API (no backend needed)
-- npm run test:e2e:live: run read-only Playwright smoke tests against the running backend and IDP
+- npm run test:e2e:live: run Playwright tests against the running backend and IDP: read-only smoke tests, and a GetAll, GetById, Create, Update, Delete pass over every resource on the default data source (each test deletes the record it creates)
 - npm run lint: lint workspace
 - npm run format: format code
 - npm run format:check: verify formatting
